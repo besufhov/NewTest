@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.documents.extraction.docx
+package com.kaankivancdilli.summary.utils.documents.extraction.docx
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import java.io.InputStream

@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.languageselector
+package com.kaankivancdilli.summary.utils.languageselector
 
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.BorderStroke

@@ -46,7 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kaankivancdilli.summary.ui.utils.tts.rememberTextToSpeech
+import com.kaankivancdilli.summary.utils.tts.rememberTextToSpeech
 import com.kaankivancdilli.summary.ui.viewmodel.main.anything.AnythingViewModel
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel

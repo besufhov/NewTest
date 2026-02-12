@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.upload
+package com.kaankivancdilli.summary.utils.upload
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,9 +6,9 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.ui.utils.documents.extraction.docx.extractTextFromDocx
-import com.kaankivancdilli.summary.ui.utils.documents.extraction.pdf.extractTextFromPdf
-import com.kaankivancdilli.summary.ui.utils.documents.extraction.txt.extractTextFromTxt
+import com.kaankivancdilli.summary.utils.documents.extraction.docx.extractTextFromDocx
+import com.kaankivancdilli.summary.utils.documents.extraction.pdf.extractTextFromPdf
+import com.kaankivancdilli.summary.utils.documents.extraction.txt.extractTextFromTxt
 import com.kaankivancdilli.summary.ui.viewmodel.main.textadd.TextAddViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

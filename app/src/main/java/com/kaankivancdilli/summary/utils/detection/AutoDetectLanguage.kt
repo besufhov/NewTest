@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.detection
+package com.kaankivancdilli.summary.utils.detection
 
 import android.util.Log
 import androidx.compose.runtime.Composable

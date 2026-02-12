@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.reusable.buttons
+package com.kaankivancdilli.summary.utils.reusable.buttons
 
 import android.content.Context
 import android.content.Intent
@@ -36,12 +36,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.docx.saveTextAsDocxToDownloads
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.pdf.saveTextAsPdfToDownloads
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.txt.saveTextAsTxtToDownloads
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.docx.shareDocxFromDownloads
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.pdf.sharePdfFromDownloads
-import com.kaankivancdilli.summary.ui.utils.documents.saveastype.txt.shareTxtFromDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.docx.saveTextAsDocxToDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.pdf.saveTextAsPdfToDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.txt.saveTextAsTxtToDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.docx.shareDocxFromDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.pdf.sharePdfFromDownloads
+import com.kaankivancdilli.summary.utils.documents.saveastype.txt.shareTxtFromDownloads
 
 
 @Composable

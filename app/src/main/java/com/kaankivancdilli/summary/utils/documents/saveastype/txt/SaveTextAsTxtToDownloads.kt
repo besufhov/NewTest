@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.documents.saveastype.txt
+package com.kaankivancdilli.summary.utils.documents.saveastype.txt
 
 import android.Manifest
 import android.app.Activity

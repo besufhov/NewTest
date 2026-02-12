@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.ui.component.textadd.TextEditor
-import com.kaankivancdilli.summary.ui.utils.upload.handleFileUpload
+import com.kaankivancdilli.summary.utils.upload.handleFileUpload
 import com.kaankivancdilli.summary.ui.viewmodel.main.textadd.TextAddViewModel
 import com.kaankivancdilli.summary.utils.reusable.design.CustomTopBar
 import com.kaankivancdilli.summary.utils.state.network.ResultState

@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.documents.extraction.pdf
+package com.kaankivancdilli.summary.utils.documents.extraction.pdf
 
 import java.io.InputStream
 

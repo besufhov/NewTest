@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.tts
+package com.kaankivancdilli.summary.utils.tts
 
 import android.content.Context
 import android.speech.tts.TextToSpeech

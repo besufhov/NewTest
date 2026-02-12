@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.documents.extraction.txt
+package com.kaankivancdilli.summary.utils.documents.extraction.txt
 
 import java.io.InputStream
 

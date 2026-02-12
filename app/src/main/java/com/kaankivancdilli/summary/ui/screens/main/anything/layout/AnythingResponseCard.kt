@@ -20,11 +20,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.kaankivancdilli.summary.ui.utils.Audio.AudioControls
-import com.kaankivancdilli.summary.ui.utils.detection.autoDetectLanguage
+import com.kaankivancdilli.summary.utils.audio.AudioControls
+import com.kaankivancdilli.summary.utils.detection.autoDetectLanguage
 import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
-import com.kaankivancdilli.summary.ui.utils.reusable.previewtext.EditablePreviewText
-import com.kaankivancdilli.summary.ui.utils.reusable.buttons.ExportButtons
+import com.kaankivancdilli.summary.utils.reusable.previewtext.EditablePreviewText
+import com.kaankivancdilli.summary.utils.reusable.buttons.ExportButtons
 import java.util.Locale
 
 

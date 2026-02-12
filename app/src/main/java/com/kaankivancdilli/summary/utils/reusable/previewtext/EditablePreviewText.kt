@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.utils.reusable.previewtext
+package com.kaankivancdilli.summary.utils.reusable.previewtext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

@@ -49,11 +49,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kaankivancdilli.summary.ui.screens.main.textadd.isTablet
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
-import com.kaankivancdilli.summary.ui.utils.Audio.AudioControls
-import com.kaankivancdilli.summary.ui.utils.detection.autoDetectLanguage
+import com.kaankivancdilli.summary.utils.audio.AudioControls
+import com.kaankivancdilli.summary.utils.detection.autoDetectLanguage
 import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
-import com.kaankivancdilli.summary.ui.utils.reusable.previewtext.EditablePreviewText
-import com.kaankivancdilli.summary.ui.utils.reusable.buttons.ExportButtons
+import com.kaankivancdilli.summary.utils.reusable.previewtext.EditablePreviewText
+import com.kaankivancdilli.summary.utils.reusable.buttons.ExportButtons
 import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)

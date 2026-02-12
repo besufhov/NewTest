@@ -45,7 +45,7 @@ import com.kaankivancdilli.summary.ui.screens.sub.history.layout.FullAnythingRes
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
 import com.kaankivancdilli.summary.ui.viewmodel.sub.fullanything.FullAnythingScreenViewModel
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.ui.utils.tts.rememberTextToSpeech
+import com.kaankivancdilli.summary.utils.tts.rememberTextToSpeech
 import com.kaankivancdilli.summary.ui.viewmodel.main.history.TextHistoryViewModel
 import com.kaankivancdilli.summary.utils.reusable.popup.SubscribeDialog
 import java.util.Locale
@@ -58,7 +58,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kaankivancdilli.summary.ui.screens.sub.history.layout.FullAnythingResultFullScreen
-import com.kaankivancdilli.summary.ui.utils.detection.autoDetectLanguage
+import com.kaankivancdilli.summary.utils.detection.autoDetectLanguage
 import com.kaankivancdilli.summary.utils.admob.adhandler.InterstitialAdHandler
 import com.kaankivancdilli.summary.utils.reusable.design.CustomHalfCurvedTopBar
 import kotlinx.coroutines.CoroutineScope
