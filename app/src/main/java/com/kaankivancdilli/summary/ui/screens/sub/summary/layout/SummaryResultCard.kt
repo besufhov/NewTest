@@ -1,12 +1,8 @@
 package com.kaankivancdilli.summary.ui.screens.sub.summary.layout
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -31,8 +26,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
@@ -47,24 +40,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kaankivancdilli.summary.ui.screens.main.isTablet
+import com.kaankivancdilli.summary.ui.screens.main.textadd.isTablet
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
-import com.kaankivancdilli.summary.ui.utils.reusable.EditablePreviewText
+import com.kaankivancdilli.summary.ui.utils.reusable.previewtext.EditablePreviewText
 import com.kaankivancdilli.summary.ui.utils.Audio.AudioControls
 import com.kaankivancdilli.summary.ui.utils.detection.autoDetectLanguage
-import com.kaankivancdilli.summary.ui.utils.reusable.ExportButtons
-import com.kaankivancdilli.summary.ui.utils.detection.state.TextToSpeechState
+import com.kaankivancdilli.summary.ui.utils.reusable.buttons.ExportButtons
+import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
 import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)

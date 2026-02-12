@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.utils.state.ResultState
+import com.kaankivancdilli.summary.utils.state.network.ResultState
 
 // ✅ Custom Saver for ResultState
 val ResultStateSaver: Saver<ResultState<String>, Any> = object : Saver<ResultState<String>, Any> {

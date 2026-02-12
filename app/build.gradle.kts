@@ -24,12 +24,6 @@ android {
         versionName = "1.2.5"
 
         testInstrumentationRunner = "androidx.kaankivancdilli.summary.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "OPENAI_API_KEY",
-            "\"${project.properties["OPENAI_API_KEY"]}\""
-        )
     }
 
     buildTypes {

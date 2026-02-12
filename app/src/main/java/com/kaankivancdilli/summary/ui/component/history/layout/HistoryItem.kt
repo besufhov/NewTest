@@ -15,10 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -30,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.data.model.local.SaveAnything
-import com.kaankivancdilli.summary.data.model.local.SaveTexts
+import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
 
 data class SectionItem(
     val title: String,

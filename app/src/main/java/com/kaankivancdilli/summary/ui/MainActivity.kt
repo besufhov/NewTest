@@ -6,12 +6,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.SideEffect
-import androidx.core.view.WindowCompat
 import com.google.android.gms.ads.MobileAds
 import androidx.core.view.WindowInsetsControllerCompat
-import com.kaankivancdilli.summary.ui.navigation.NavigationController
-import com.kaankivancdilli.summary.ui.screens.SharedImageViewModel
+import com.kaankivancdilli.summary.ui.navigation.controller.NavigationController
+import com.kaankivancdilli.summary.ui.viewmodel.sub.sharedimage.SharedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

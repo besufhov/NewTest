@@ -1,12 +1,7 @@
 package com.kaankivancdilli.summary.ui.screens.main.anything.layout
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,16 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kaankivancdilli.summary.ui.utils.Audio.AudioControls
 import com.kaankivancdilli.summary.ui.utils.detection.autoDetectLanguage
-import com.kaankivancdilli.summary.ui.utils.detection.state.TextToSpeechState
-import com.kaankivancdilli.summary.ui.utils.reusable.EditablePreviewText
-import com.kaankivancdilli.summary.ui.utils.reusable.ExportButtons
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
+import com.kaankivancdilli.summary.ui.utils.reusable.previewtext.EditablePreviewText
+import com.kaankivancdilli.summary.ui.utils.reusable.buttons.ExportButtons
 import java.util.Locale
 
 

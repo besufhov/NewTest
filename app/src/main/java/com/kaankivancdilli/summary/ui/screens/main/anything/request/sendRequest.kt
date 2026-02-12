@@ -1,6 +1,6 @@
 package com.kaankivancdilli.summary.ui.screens.main.anything.request
 
-import com.kaankivancdilli.summary.ui.screens.main.anything.viewmodel.AnythingViewModel
+import com.kaankivancdilli.summary.ui.viewmodel.main.anything.AnythingViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

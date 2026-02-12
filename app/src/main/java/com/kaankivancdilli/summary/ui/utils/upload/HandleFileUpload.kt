@@ -6,10 +6,10 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.ui.utils.extraction.extractTextFromDocx
-import com.kaankivancdilli.summary.ui.utils.extraction.extractTextFromPdf
-import com.kaankivancdilli.summary.ui.utils.extraction.extractTextFromTxt
-import com.kaankivancdilli.summary.ui.viewmodel.textadd.TextAddViewModel
+import com.kaankivancdilli.summary.ui.utils.documents.extraction.docx.extractTextFromDocx
+import com.kaankivancdilli.summary.ui.utils.documents.extraction.pdf.extractTextFromPdf
+import com.kaankivancdilli.summary.ui.utils.documents.extraction.txt.extractTextFromTxt
+import com.kaankivancdilli.summary.ui.viewmodel.main.textadd.TextAddViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

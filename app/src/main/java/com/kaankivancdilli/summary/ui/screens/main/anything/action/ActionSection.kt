@@ -1,7 +1,5 @@
 package com.kaankivancdilli.summary.ui.screens.main.anything.action
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,18 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.ui.screens.main.anything.layout.AnythingResponseCard
 import com.kaankivancdilli.summary.ui.screens.main.anything.fields.getLocalizedActionFields
-import com.kaankivancdilli.summary.ui.utils.detection.state.TextToSpeechState
+import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
 import java.util.Locale
 
 @Composable

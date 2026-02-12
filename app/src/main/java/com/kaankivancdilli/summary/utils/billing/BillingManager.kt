@@ -16,11 +16,7 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
-import com.kaankivancdilli.summary.utils.reusable.BillingManagerHolder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.kaankivancdilli.summary.utils.reusable.popup.BillingManagerHolder
 import javax.inject.Inject
 import kotlin.math.pow
 
