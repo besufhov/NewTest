@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.kaankivancdilli.summary.data.local.dao.anything.AnythingDao
 import com.kaankivancdilli.summary.data.local.dao.image.ImageDao
 import com.kaankivancdilli.summary.data.local.dao.text.TextDao
-import com.kaankivancdilli.summary.data.model.local.Converters
+import com.kaankivancdilli.summary.data.model.local.converter.Converters
 import com.kaankivancdilli.summary.data.model.local.image.ImageEntity
 import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts

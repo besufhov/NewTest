@@ -14,7 +14,7 @@ interface AnythingDao {
     suspend fun insertAnything(anything: SaveAnything)
 
     @Query("SELECT * FROM anything ORDER BY timestamp DESC")
-   // @Query("SELECT * FROM anything ORDER BY id ASC")
+
     fun getAllAnything(): Flow<List<SaveAnything>>
 
     @Query("UPDATE anything SET summarize = :summarize WHERE summarize = :summarize")

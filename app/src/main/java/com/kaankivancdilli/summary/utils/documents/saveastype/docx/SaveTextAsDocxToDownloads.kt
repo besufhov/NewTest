@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
@@ -13,12 +12,10 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.kaankivancdilli.summary.R
-import org.apache.poi.xwpf.usermodel.XWPFDocument
+import com.kaankivancdilli.summary.utils.documents.create.docx.writeDocxToStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 
 fun saveTextAsDocxToDownloads(context: Context, fileName: String, text: String) {
     val fileNameWithExt = "$fileName.docx"
@@ -81,31 +78,3 @@ fun saveTextAsDocxToDownloads(context: Context, fileName: String, text: String) 
         }
     }
 }
-
-fun writeDocxToStream(text: String, outputStream: OutputStream) {
-    val doc = XWPFDocument()
-    val para = doc.createParagraph()
-    val run = para.createRun()
-    run.setText(text)
-    doc.write(outputStream)
-    doc.close()
-}
-
-
-
-fun shareDocxFromDownloads(context: Context, fileName: String) {
-    val fileNameWithExt = if (fileName.endsWith(".docx")) fileName else "$fileName.docx"
-
-    val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameWithExt)
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_docx)))
-}
-
-

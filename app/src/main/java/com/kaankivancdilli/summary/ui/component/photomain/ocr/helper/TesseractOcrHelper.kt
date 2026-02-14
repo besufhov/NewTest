@@ -36,7 +36,6 @@ class TesseractOcrHelper(
         val tessdataDir = File("$dataPath/tessdata")
         if (!tessdataDir.exists()) tessdataDir.mkdirs()
 
-        // Copy traineddata if missing
         val trainedDataFile = File(tessdataDir, "$tessLangCode.traineddata")
         if (!trainedDataFile.exists()) {
             context.assets.open("tessdata/$tessLangCode.traineddata").use { input ->
@@ -46,7 +45,6 @@ class TesseractOcrHelper(
             }
         }
 
-        // Init Tesseract
         tessBaseAPI = TessBaseAPI()
         if (!tessBaseAPI.init(dataPath, tessLangCode)) {
             tessBaseAPI.recycle()

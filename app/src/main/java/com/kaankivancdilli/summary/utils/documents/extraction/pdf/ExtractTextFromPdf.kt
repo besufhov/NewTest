@@ -4,7 +4,6 @@ import java.io.InputStream
 
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
-
 import com.tom_roush.pdfbox.io.MemoryUsageSetting
 
 fun extractTextFromPdf(inputStream: InputStream, maxChars: Int = 16000): String {
@@ -43,41 +42,3 @@ fun extractTextFromPdf(inputStream: InputStream, maxChars: Int = 16000): String 
 
     return textBuilder.toString()
 }
-
-
-
-fun extractTextFromPdfVanilla(inputStream: InputStream): String {
-    return try {
-        PDDocument.load(inputStream).use { document ->
-            val stripper = PDFTextStripper()
-            stripper.getText(document)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        ""
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

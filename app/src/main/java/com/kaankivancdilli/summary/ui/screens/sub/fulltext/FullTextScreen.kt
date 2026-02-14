@@ -40,9 +40,8 @@ fun FullTextScreen(
     val message = sendTexts.find { it.id == messageId }
     val scrollState = rememberScrollState()
 
-    var text by remember { mutableStateOf("Loading...") } // ✅ Start with loading state
+    var text by remember { mutableStateOf("Loading...") }
 
-    // ✅ Update text when sendTexts updates
     LaunchedEffect(sendTexts) {
         text = message?.summarize ?: "Message not found"
     }

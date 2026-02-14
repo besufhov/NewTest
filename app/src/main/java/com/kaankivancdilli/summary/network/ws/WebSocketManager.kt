@@ -3,7 +3,7 @@ package com.kaankivancdilli.summary.network.ws
 import com.kaankivancdilli.summary.data.model.network.receive.ChatGptReceive
 import com.kaankivancdilli.summary.data.model.network.response.ChatGptResponse
 import com.kaankivancdilli.summary.data.model.network.response.ResponseContent
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -81,6 +81,3 @@ class WebSocketManager @Inject constructor() {
         webSocket = null
     }
 }
-
-
-

@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.data.local.dao.textedit.TextEditDao
 import com.kaankivancdilli.summary.data.model.local.textedit.SaveEditTexts
 import com.kaankivancdilli.summary.network.ws.WebSocketManager
-import com.kaankivancdilli.summary.utils.state.subscription.SubscriptionChecker
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,7 @@ class TextAddViewModel @Inject constructor(
     val subscriptionChecker: SubscriptionChecker,
 ) : ViewModel() {
 
-    private val webSocketManager = WebSocketManager() // ✅ Each ViewModel gets its own instance
+    private val webSocketManager = WebSocketManager()
 
     private val _isSubscribed = MutableStateFlow(false)
     val isSubscribed: StateFlow<Boolean> = _isSubscribed
@@ -44,8 +44,6 @@ class TextAddViewModel @Inject constructor(
                 _textState.value = savedText?.content ?: ""
             }
         }
-
-
     }
 
     fun setSubscriptionStatus(value: Boolean) {
@@ -61,8 +59,6 @@ class TextAddViewModel @Inject constructor(
     fun updateTextState(newText: String) {
         _textState.value = newText
     }
-
-
 
     suspend fun summarizeText(text: String? = null) {
         val currentText = text ?: _textState.value  // Use passed text or the current _textState value
@@ -82,13 +78,10 @@ class TextAddViewModel @Inject constructor(
         }
     }
 
-
     fun clearText() {
         _textState.value = ""
         _summaryState.value = ResultState.Idle
     }
-
-
 
     override fun onCleared() {
         super.onCleared()
@@ -99,5 +92,3 @@ class TextAddViewModel @Inject constructor(
         _summaryState.value = ResultState.Idle
     }
 }
-
-

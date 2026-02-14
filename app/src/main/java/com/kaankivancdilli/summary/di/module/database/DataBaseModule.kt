@@ -26,29 +26,20 @@ object DatabaseModule {
             context,
             TextDatabase::class.java,
             "text_database"
-        ).fallbackToDestructiveMigration() // THIS ALLOWS RESETTING THE DATABASE put .fallback here
+        ).fallbackToDestructiveMigration()
             .build()
     }
-//.fallbackToDestructiveMigration()
+
     @Provides
     @Singleton
     fun provideTextEditDatabase(@ApplicationContext context: Context): TextEditDatabase {
         return Room.databaseBuilder(
             context,
             TextEditDatabase::class.java,
-            "text_edit_database" // This is for edit_texts
+            "text_edit_database"
         ).build()
     }
 
-    //@Provides
-    //@Singleton
-    //fun provideAnythingDatabase(@ApplicationContext context: Context): AnythingDatabase {
-     //   return Room.databaseBuilder(
-     //       context,
-      //      AnythingDatabase::class.java,
-     //       "anything_database" // This is for edit_texts
-     //   ).build()
-    //}
     @Provides
     fun provideAnythingDao(database: TextDatabase): AnythingDao {
         return database.anythingDao()
@@ -59,7 +50,6 @@ object DatabaseModule {
         return database.textDao()
     }
 
-
     @Provides @Singleton
     fun provideImageDao(db: TextDatabase): ImageDao = db.imageDao()
 
@@ -67,11 +57,4 @@ object DatabaseModule {
     fun provideTextEditDao(database: TextEditDatabase): TextEditDao {
         return database.textEditDao()
     }
-
-    //@Provides
-    //fun provideAnythingDao(database: AnythingDatabase): AnythingDao {
-    //    return database.anythingDao()
-    //}
-
-
 }

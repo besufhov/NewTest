@@ -78,19 +78,3 @@ fun saveTextAsTxtToDownloads(context: Context, fileName: String, text: String) {
         }
     }
 }
-
-
-
-fun shareTxtFromDownloads(context: Context, fileName: String) {
-    val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_text)))
-
-}

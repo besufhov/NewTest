@@ -23,6 +23,7 @@ class PageBoundedOcrHandler @Inject constructor(
     private var previewWidth = 0
     private var previewHeight = 0
     private val _recognizedText = MutableStateFlow("")
+
     val recognizedText: StateFlow<String> = _recognizedText
 
     fun getDetectionRect(): Rect? = detectionRectState.value
@@ -109,12 +110,6 @@ class PageBoundedOcrHandler @Inject constructor(
         Log.d("OCR", "📊 Final Rect: $finalRect")
 
         return try {
-            // Create InputImage from the cropped image
-       //     createInputImageFromImageProxy(image, finalRect)?.also {
-        //        Log.d("OCR", "✅ Successfully created cropped InputImage.")
-       //     } ?: imageProxyToInputImage(image)?.also {
-         //       Log.w("OCR", "⚠️ Using fallback InputImage (no cropping applied).")
-       //     }
             imageProxyToInputImage(image)?.also {
                 Log.w("OCR", "⚠️ Using fallback InputImage (no cropping applied).")
             }

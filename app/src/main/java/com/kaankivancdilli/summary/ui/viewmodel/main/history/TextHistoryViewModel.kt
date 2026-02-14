@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
-import com.kaankivancdilli.summary.data.repository.anything.AnythingScreenRepository
+import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.data.repository.sub.summary.SummaryScreenRepository
-import com.kaankivancdilli.summary.utils.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +39,6 @@ class TextHistoryViewModel @Inject constructor(
             val subscribed = subscriptionChecker.isUserSubscribed()
             _isSubscribed.value = subscribed
         }
-
     }
 
     fun setSubscriptionStatus(value: Boolean) {
@@ -62,7 +61,6 @@ class TextHistoryViewModel @Inject constructor(
         }
     }
 
-
     fun deleteMessage(message: SaveTexts) {
         viewModelScope.launch {
             summaryScreenRepository.deleteText(message) // Delete from Room
@@ -76,6 +74,4 @@ class TextHistoryViewModel @Inject constructor(
             _saveAnything.value = _saveAnything.value.filterNot { it.id == message.id } // Update UI
         }
     }
-
-
 }

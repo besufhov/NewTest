@@ -13,8 +13,8 @@ fun sendRequest(
     summary: String,
     viewModel: AnythingViewModel,
     setLoading: (String, Boolean) -> Unit,
-    retryCount: Int = 0, // NEW: track retries
-    maxRetries: Int = 5  // NEW: set retry limit
+    retryCount: Int = 0,
+    maxRetries: Int = 5
 ) {
     val fields = actionFields[action] ?: return
     val firstField = fields.firstOrNull() ?: return

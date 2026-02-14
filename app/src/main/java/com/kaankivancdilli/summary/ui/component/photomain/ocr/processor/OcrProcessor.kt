@@ -8,7 +8,7 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.handler.PageBoundedOcrHandler
-import com.kaankivancdilli.summary.data.repository.photomain.OcrRepository
+import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository
 import com.kaankivancdilli.summary.utils.bitmap.downsampleToMaxSize
 import com.kaankivancdilli.summary.utils.bitmap.rotate
 import kotlinx.coroutines.CoroutineScope

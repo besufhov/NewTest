@@ -4,15 +4,15 @@ data class ChatGptReceive(
     val type: String,
     val event_id: String?,
     val session: SessionContent?,
-    val item: ItemContent?, // For response.output_item.done
-    val response: ResponseData? // ✅ Add this to handle response.done
+    val item: ItemContent?,
+    val response: ResponseData?
 )
 
 data class ResponseData(
     val objectType: String,
     val id: String,
     val status: String,
-    val output: List<ItemContent> // ✅ The actual output content
+    val output: List<ItemContent>
 )
 
 data class SessionContent(
@@ -42,18 +42,17 @@ data class TurnDetection(
     val interrupt_response: Boolean
 )
 
-// New data class to capture the "item" and its "content"
 data class ItemContent(
     val id: String,
     val objectType: String,
     val type: String,
     val status: String,
     val role: String,
-    val content: List<Content> // List of content objects
+    val content: List<Content>
 )
 
 // New data class to capture the "content" field inside the "item"
 data class Content(
     val type: String,
-    val text: String // The actual text you want to extract
+    val text: String
 )

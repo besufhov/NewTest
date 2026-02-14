@@ -37,14 +37,3 @@ fun extractTextFromTxt(inputStream: InputStream, maxChars: Int = 16000): String 
 
     return builder.toString()
 }
-
-
-
-fun extractTextFromTxtVanilla(inputStream: InputStream): String {
-    return try {
-        inputStream.bufferedReader().use { it.readText() }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        ""
-    }
-}

@@ -1,7 +1,7 @@
 package com.kaankivancdilli.summary.ui.viewmodel.sub.subscription
 
 import androidx.lifecycle.ViewModel
-import com.kaankivancdilli.summary.utils.billing.BillingManager
+import com.kaankivancdilli.summary.core.billing.manager.BillingManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ class SubscriptionViewModel @Inject constructor(
     val isSubscribed: StateFlow<Boolean> = _isSubscribed.asStateFlow()
 
     init {
-        checkSubscription() // Check on init
+        checkSubscription()
         billingManager.setSubscriptionListener { isSubscribed ->
             _isSubscribed.value = isSubscribed // Update live subscription status
         }
@@ -29,4 +29,3 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 }
-

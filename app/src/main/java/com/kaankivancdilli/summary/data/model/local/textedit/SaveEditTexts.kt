@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "edit_texts")
 data class SaveEditTexts(
-    @PrimaryKey val id: Int = 1, // Always overwrite this entry
+    @PrimaryKey val id: Int = 1,
     val content: String,
     val isUserMessage: Boolean
 )

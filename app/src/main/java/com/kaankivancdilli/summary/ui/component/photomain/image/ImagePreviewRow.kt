@@ -3,8 +3,6 @@ package com.kaankivancdilli.summary.ui.component.photomain.image
 import android.graphics.Bitmap
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,11 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.*
-import androidx.compose.ui.platform.LocalConfiguration
-import com.kaankivancdilli.summary.ui.component.photomain.image.layout.VerticalSwipeToDismiss
+import com.kaankivancdilli.summary.ui.component.reusable.dismiss.VerticalSwipeToDismiss
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImagePreviewRow(
     capturedImages: List<Triple<String, Bitmap, String>>,
@@ -47,8 +43,9 @@ fun ImagePreviewRow(
                     .fillMaxWidth()
                     .height(globalCalculatedCameraHeight)
             ) { page ->
+
                 val (imageId, imageBitmap, _) = capturedImages[page]
-                // Vertical swipe to dismiss gesture
+
                 VerticalSwipeToDismiss(
                     onSwipeAttempt = { onDismiss(imageId) },
                     animateBack = true
@@ -62,9 +59,8 @@ fun ImagePreviewRow(
                 }
             }
 
-            // Show navigation buttons only if there are multiple images
             if (capturedImages.size > 1) {
-                // Previous Button - Fixed at the bottom center left
+
                 if (pagerState.currentPage > 0) {
                     IconButton(
                         onClick = {
@@ -80,7 +76,6 @@ fun ImagePreviewRow(
                     }
                 }
 
-                // Next Button - Fixed at the bottom center right
                 if (pagerState.currentPage < capturedImages.size - 1) {
                     IconButton(
                         onClick = {
@@ -98,7 +93,6 @@ fun ImagePreviewRow(
                 }
             }
 
-            // Close Button - Fixed at the top right
             IconButton(
                 onClick = { onDismiss(capturedImages[pagerState.currentPage].first) },
                 modifier = Modifier
@@ -110,8 +104,3 @@ fun ImagePreviewRow(
         }
     }
 }
-
-
-
-
-

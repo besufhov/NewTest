@@ -2,7 +2,7 @@ package com.kaankivancdilli.summary.network.rest
 
 import com.google.gson.Gson
 import com.kaankivancdilli.summary.data.model.network.ChatGptRestData.ChatCompletionResponse
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +14,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
-
 
 class RestApiManager {
 
@@ -75,4 +74,3 @@ class RestApiManager {
         })
     }
 }
-

@@ -8,11 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.data.model.local.image.ImageEntity
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import com.kaankivancdilli.summary.data.repository.sub.summary.SummaryScreenRepository
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
-import com.kaankivancdilli.summary.utils.billing.BillingManager
-import com.kaankivancdilli.summary.utils.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.core.billing.manager.BillingManager
+import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +20,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import com.kaankivancdilli.summary.network.rest.RestApiManager
-import com.kaankivancdilli.summary.utils.state.usage.FreeUsageTracker
+import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 
@@ -33,7 +32,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 class SummaryScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val summaryScreenRepository: SummaryScreenRepository,
-    // private val webSocketManager: WebSocketManager,
     private val subscriptionChecker: SubscriptionChecker,
     private val billingManager: BillingManager,
     savedStateHandle: SavedStateHandle,
@@ -51,21 +49,13 @@ class SummaryScreenViewModel @Inject constructor(
     private val _results = MutableStateFlow<Map<String, String>>(emptyMap())
     val results: StateFlow<Map<String, String>> = _results.asStateFlow()
 
-    fun updateResults(lastAction: String, newMessage: String) {
-        _results.value = _results.value.toMutableMap().apply {
-            this[lastAction] = newMessage
-        }
-    }
-
     private var _continueAfterAd: (() -> Unit)? = null
 
-    // Flag to skip interstitial once after reset from rewarded ad
     private var skipInterstitialOnceAfterReset = false
 
     private val _showInterstitialAd = MutableStateFlow(false)
     val showInterstitialAd: StateFlow<Boolean> = _showInterstitialAd
 
-    private val textLabel = context.getString(R.string.text)
     private val summarizeLabel    = context.getString(R.string.summarize)
     private val paraphraseLabel   = context.getString(R.string.paraphrase)
     private val rephraseLabel   = context.getString(R.string.rephrase)
@@ -87,11 +77,8 @@ class SummaryScreenViewModel @Inject constructor(
     }
 
     fun saveResultForAction(actionKey: String, text: String) {
-        // update results map
         _results.value = _results.value.toMutableMap()
             .also { it[actionKey] = text }
-
-        // mark this action completed
         _completedActions.value = _completedActions.value + actionKey
     }
 
@@ -101,11 +88,9 @@ class SummaryScreenViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    // Track if text is summarized
     private val _isSummarizedText = MutableStateFlow(false)
     val isSummarizedText: StateFlow<Boolean> = _isSummarizedText
 
-    // Track if text is paraphrased
     private val _isParaphrasedText = MutableStateFlow(false)
     val isParaphrasedText: StateFlow<Boolean> = _isParaphrasedText
 
@@ -118,7 +103,7 @@ class SummaryScreenViewModel @Inject constructor(
     private val _isBulletpointedText = MutableStateFlow(false)
     val isBulletpointedText: StateFlow<Boolean> = _isBulletpointedText
 
-    // Store the original OCR text
+
     private var originalOcrText: String = ""
 
     private var imageTriples: List<Triple<String, Bitmap, String>>? = null
@@ -129,10 +114,6 @@ class SummaryScreenViewModel @Inject constructor(
 
     val matchedBitmap: Bitmap?
         get() = imageTriples?.firstOrNull { it.third == originalOcrText }?.second
-
-    val imageBytes: ByteArray?
-        get() = matchedBitmap?.let { bitmapToByteArray(it) }
-
 
     private val _showSubscribeDialog = MutableStateFlow(false)
     val showSubscribeDialog: StateFlow<Boolean> = _showSubscribeDialog
@@ -151,13 +132,10 @@ class SummaryScreenViewModel @Inject constructor(
         _processingAction.value = action
     }
 
-
     init {
         savedStateHandle.get<Int>("messageId")?.let { loadSavedText(it) }
         observeTexts()
     }
-
-
 
     fun sendMessage(content: String, ocrText: String, actionType: ActionType?) {
         if (content.isBlank()) return
@@ -178,11 +156,9 @@ class SummaryScreenViewModel @Inject constructor(
                     return@launch
                 }
             }
-
             sendToWebSocket(content, ocrText, actionType)
         }
     }
-
 
     fun subscribeUser(activity: Activity, subscriptionViewModel: SubscriptionViewModel) {
         billingManager.startConnection {
@@ -214,7 +190,6 @@ class SummaryScreenViewModel @Inject constructor(
             billingManager.launchPurchase(activity, "monthly_subscription")
         }
     }
-
 
     private suspend fun sendToWebSocket(content: String, ocrText: String, actionType: ActionType?) {
         originalOcrText = ocrText
@@ -264,7 +239,6 @@ class SummaryScreenViewModel @Inject constructor(
                     val initialResults = mutableMapOf<String, String>()
                     val initialCompleted = mutableSetOf<String>()
 
-                    // Only add non-blank transformations
                     if (textRow.summarize.isNotBlank()) {
                         initialResults[summarizeLabel] = textRow.summarize
                         initialCompleted.add(summarizeLabel)
@@ -293,7 +267,6 @@ class SummaryScreenViewModel @Inject constructor(
         }
     }
 
-
     fun updateEditedResponse(action: ActionType, editedText: String, originalId: Int?) {
         viewModelScope.launch {
             if (originalId == null || originalId == 0) return@launch
@@ -313,7 +286,6 @@ class SummaryScreenViewModel @Inject constructor(
                 ActionType.ORIGINAL -> existing.copy(ocrText = editedText) // Assuming you have ocrText in the entity
             }
 
-            // ✅ This updates the UI map!
             val actionKey = when (action) {
                 ActionType.SUMMARIZE    -> summarizeLabel
                 ActionType.PARAPHRASE  -> paraphraseLabel
@@ -323,7 +295,7 @@ class SummaryScreenViewModel @Inject constructor(
                 ActionType.ORIGINAL    -> "Original"
             }
 
-            saveResultForAction(actionKey, editedText) // This updates the UI!
+            saveResultForAction(actionKey, editedText)
 
             summaryScreenRepository.saveText(updated)
             _saveTexts.value = listOf(updated)
@@ -333,7 +305,6 @@ class SummaryScreenViewModel @Inject constructor(
 
     fun triggerInterstitialAd() {
         if (skipInterstitialOnceAfterReset) {
-            // Skip showing interstitial this time, reset the flag
             skipInterstitialOnceAfterReset = false
             Log.d("AnythingViewModel", "Skipping interstitial ad due to recent reset")
             return
@@ -364,12 +335,6 @@ class SummaryScreenViewModel @Inject constructor(
         }
     }
 
-    fun rewardSingleUsage() {
-        viewModelScope.launch {
-            //   freeUsageTracker.incrementAndGet()
-            Log.d("AnythingViewModel", "Granted 1 free usage after rewarded interstitial")
-        }
-    }
 
     fun continueAfterAd() {
         _continueAfterAd?.invoke()
@@ -388,7 +353,6 @@ class SummaryScreenViewModel @Inject constructor(
                     is ResultState.Success -> {
                         val extractedText = result.data
 
-                        // Only save if the received text is summarized
                         if (_isSummarizedText.value) {
 
                                 val usageCount = freeUsageTracker.getCount()
@@ -417,7 +381,6 @@ class SummaryScreenViewModel @Inject constructor(
                                         expand = "",
                                         bulletpoint = "",
                                         isUserMessage = false,
-                                        //   imageData = imageBytes
                                     )
                                 }
                                 val isSubbed = subscriptionChecker.isUserSubscribed()
@@ -425,18 +388,8 @@ class SummaryScreenViewModel @Inject constructor(
                                 triggerInterstitialAd()
                             }
 
-                            _isSummarizedText.value = false  // Reset after saving
+                            _isSummarizedText.value = false
                         } else if (_isParaphrasedText.value) {
-
-
-                           //     val usageCount = freeUsageTracker.getCount()
-                           //     if (usageCount <= 20) {
-                          //          freeUsageTracker.incrementAndGet()
-                         //           Log.d(
-                         //               "AnythingVM",
-                        //                "Free usage incremented to ${usageCount + 1}"
-                        //            )
-                        //        }
 
                                 saveTexts(
                                     id = _saveTexts.value.firstOrNull()?.id?.takeIf { it > 0 },
@@ -459,27 +412,12 @@ class SummaryScreenViewModel @Inject constructor(
                                         expand = "",
                                         bulletpoint = "",
                                         isUserMessage = false,
-                                        //   imageData = imageBytes
                                     )
                                 }
 
-                       //         val isSubbed = subscriptionChecker.isUserSubscribed()
-                      //      if (!isSubbed && usageCount % 3 == 0) { // 0, 2, 4... → before incrementing, so acts on 1st, 3rd, 5th...
-                      //          triggerInterstitialAd()
-                      //      }
+                            _isParaphrasedText.value = false
 
-
-                            _isParaphrasedText.value = false // Reset after saving
                         } else if (_isRephrasedText.value) {
-
-                         //       val usageCount = freeUsageTracker.getCount()
-                        //        if (usageCount <= 20) {
-                        //            freeUsageTracker.incrementAndGet()
-                        //            Log.d(
-                        //                "AnythingVM",
-                        //                "Free usage incremented to ${usageCount + 1}"
-                         //           )
-                        //        }
 
                                 saveTexts(
                                     id = _saveTexts.value.firstOrNull()?.id?.takeIf { it > 0 },
@@ -501,28 +439,12 @@ class SummaryScreenViewModel @Inject constructor(
                                         expand = "",
                                         bulletpoint = "",
                                         isUserMessage = false,
-                                        //     imageData = imageBytes
                                     )
                                 }
 
-                         //       val isSubbed = subscriptionChecker.isUserSubscribed()
+                            _isRephrasedText.value = false
 
-                       //     if (!isSubbed && usageCount % 3 == 0) { // 0, 2, 4... → before incrementing, so acts on 1st, 3rd, 5th...
-                       //         triggerInterstitialAd()
-                       //     }
-
-                            _isRephrasedText.value = false // Reset after saving
                         } else if (_isExpandedText.value) {
-
-
-                           //     val usageCount = freeUsageTracker.getCount()
-                           //     if (usageCount <= 20) {
-                          //          freeUsageTracker.incrementAndGet()
-                         //           Log.d(
-                         //               "AnythingVM",
-                         //               "Free usage incremented to ${usageCount + 1}"
-                         //           )
-                        //        }
 
                                 saveTexts(
                                     id = _saveTexts.value.firstOrNull()?.id?.takeIf { it > 0 },
@@ -544,27 +466,12 @@ class SummaryScreenViewModel @Inject constructor(
                                         expand = extractedText,
                                         bulletpoint = "",
                                         isUserMessage = false,
-                                        //     imageData = imageBytes
                                     )
                                 }
 
-                       //         val isSubbed = subscriptionChecker.isUserSubscribed()
+                            _isExpandedText.value = false
 
-                       //     if (!isSubbed && usageCount % 3 == 0) { // 0, 2, 4... → before incrementing, so acts on 1st, 3rd, 5th...
-                        //        triggerInterstitialAd()
-                      //      }
-                            _isExpandedText.value = false // Reset after saving
                         } else if (_isBulletpointedText.value) {
-
-
-                        //        val usageCount = freeUsageTracker.getCount()
-                        //        if (usageCount <= 20) {
-                        //            freeUsageTracker.incrementAndGet()
-                        //            Log.d(
-                        //                "AnythingVM",
-                       //                 "Free usage incremented to ${usageCount + 1}"
-                        //            )
-                       //         }
 
                                 saveTexts(
                                     id = _saveTexts.value.firstOrNull()?.id?.takeIf { it > 0 },
@@ -586,19 +493,11 @@ class SummaryScreenViewModel @Inject constructor(
                                         expand = "",
                                         bulletpoint = extractedText,
                                         isUserMessage = false,
-                                        //      imageData = imageBytes
                                     )
                                 }
 
-                            //    val isSubbed = subscriptionChecker.isUserSubscribed()
-
-                        //    if (!isSubbed && usageCount % 3 == 0) { // 0, 2, 4... → before incrementing, so acts on 1st, 3rd, 5th...
-                        //        triggerInterstitialAd()
-                      //      }
-
-                            _isBulletpointedText.value = false // Reset after saving
+                            _isBulletpointedText.value = false
                         } else {
-                            // Add OCR text without saving (not summarized)
                             _saveTexts.update { currentList ->
                                 currentList + SaveTexts(
                                     summarize = "",
@@ -608,7 +507,6 @@ class SummaryScreenViewModel @Inject constructor(
                                     expand = "",
                                     bulletpoint = "",
                                     isUserMessage = false,
-                                    //     imageData = imageBytes
                                 )
                             }
                         }
@@ -622,9 +520,6 @@ class SummaryScreenViewModel @Inject constructor(
         }
     }
 
-
-
-
     private suspend fun saveTexts(
         id: Int?,
         summarize: String,
@@ -636,12 +531,10 @@ class SummaryScreenViewModel @Inject constructor(
         isUserMessage: Boolean,
         bitmap: Bitmap?
     ) {
-        // 1) Gather & (optionally) compress your passed bitmap images
         val triples = imageTriples ?: emptyList()
-        // (You could compress each Triple’s Bitmap here if you like)
 
         if (id == null || id == 0) {
-            // ➤ INSERT NEW ROW + IMAGES
+
             val newText = SaveTexts(
                 summarize     = summarize,
                 paraphrase    = paraphrase,
@@ -652,15 +545,13 @@ class SummaryScreenViewModel @Inject constructor(
                 isUserMessage = isUserMessage
             )
 
-            // This does: insert text row → deleteByTextId(…) → insert each image → returns new textId
             val newId = summaryScreenRepository
                 .saveTextWithImages(newText, triples)
                 .toInt()
 
-            // Immediately reload that new entry (text + images):
             loadSavedText(newId)
         } else {
-            // ➤ UPDATE EXISTING TEXT FIELDS
+
             val existing = summaryScreenRepository.getSavedTextById(id) ?: return
 
             val updated = existing.copy(
@@ -669,48 +560,16 @@ class SummaryScreenViewModel @Inject constructor(
                 rephrase    = rephrase.ifBlank    { existing.rephrase },
                 expand      = expand.ifBlank      { existing.expand },
                 bulletpoint = bulletpoint.ifBlank { existing.bulletpoint }
-                // we leave ocrText/isUserMessage unchanged
             )
 
-            // Update only the textual fields:
             summaryScreenRepository.saveText(updated)
 
-
-            // If you provided new images, replace them too:
             if (triples.isNotEmpty()) {
                 summaryScreenRepository.saveTextWithImages(updated, triples)
             }
 
-            // And reload for UI:
             loadSavedText(id)
         }
     }
-
 }
-
-// Your composables above...
-
-fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
-    val stream = ByteArrayOutputStream()
-
-    // Scale down aggressively to ~25% original size
-    val scaledBitmap = Bitmap.createScaledBitmap(
-        bitmap,
-        bitmap.width / 3,  // Adjust these divisors as needed
-        bitmap.height / 3,
-        true
-    )
-
-    // Compress to lower JPEG quality (30% is a good sweet spot)
-    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 30, stream)
-
-    return stream.toByteArray()
-}
-
-
-
-
-
-
-
 

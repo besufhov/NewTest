@@ -4,15 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.view.PreviewView
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-//import kotlinx.coroutines.flow.internal.NoOpContinuation.context
-//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 import android.view.View
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -23,8 +20,8 @@ import com.kaankivancdilli.summary.ui.component.photomain.ocr.cameracontroller.O
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.processor.OcrProcessor
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.handler.PageBoundedOcrHandler
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.service.OCRWorker
-import com.kaankivancdilli.summary.data.repository.photomain.OcrRepository
-import com.kaankivancdilli.summary.utils.state.texttoimage.TextImageState
+import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository
+import com.kaankivancdilli.summary.ui.state.texttoimage.TextImageState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

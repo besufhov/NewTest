@@ -4,7 +4,6 @@ package com.kaankivancdilli.summary.ui.screens.sub.summary.screen
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,7 +29,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,9 +56,9 @@ import com.kaankivancdilli.summary.ui.viewmodel.sub.sharedimage.SharedImageViewM
 import com.kaankivancdilli.summary.ui.screens.sub.summary.layout.SummaryResultCard
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.utils.tts.rememberTextToSpeech
-import com.kaankivancdilli.summary.utils.detection.autoDetectLanguage
-import com.kaankivancdilli.summary.utils.reusable.popup.SubscribeDialog
+import com.kaankivancdilli.summary.ui.component.audio.tts.remembertts.rememberTextToSpeech
+import com.kaankivancdilli.summary.core.detection.autoDetectLanguage
+import com.kaankivancdilli.summary.ui.component.reusable.popup.SubscribeDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -74,14 +72,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kaankivancdilli.summary.ui.component.photomain.image.ImagePreviewRow
 import com.kaankivancdilli.summary.ui.screens.sub.summary.layout.SummaryResultFullScreen
-import com.kaankivancdilli.summary.utils.admob.adhandler.InterstitialAdHandler
-import com.kaankivancdilli.summary.utils.rate.requestInAppReview
-import com.kaankivancdilli.summary.utils.reusable.design.CustomHalfCurvedTopBar
+import com.kaankivancdilli.summary.ui.component.admob.adhandler.InterstitialAdHandler
+import com.kaankivancdilli.summary.core.review.requestInAppReview
+import com.kaankivancdilli.summary.ui.component.reusable.bar.CustomHalfCurvedTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SummaryScreen(
     text: String,
@@ -92,7 +88,6 @@ fun SummaryScreen(
     summaryScreenViewModel: SummaryScreenViewModel = hiltViewModel()
 ) {
 
-    // 1) Collect the Pair<SaveTexts,List<ImageEntity>>? from your VM
     val textWithImages by summaryScreenViewModel.textWithImages.collectAsState()
 
     val cameraImages by sharedImageViewModel.imageData.collectAsState()
@@ -100,14 +95,12 @@ fun SummaryScreen(
     val ttsState = rememberTextToSpeech(LocalContext.current)
 
     val ocrText = remember { text }
-    //val actions = listOf("Summarize", "Paraphrase", "Rephrase", "Expand", "Bulletpoint")
 
     var lastAction by rememberSaveable { mutableStateOf("") }
 
     val results by summaryScreenViewModel.results.collectAsState()
     val completedActions by summaryScreenViewModel.completedActions.collectAsState()
     val processingAction by summaryScreenViewModel.processingAction.collectAsState()
-    val errorMessage by summaryScreenViewModel.errorMessage.collectAsState()
 
     var selectedLanguage by rememberSaveable { mutableStateOf(Locale.getDefault()) }
 
@@ -159,8 +152,8 @@ fun SummaryScreen(
                 val newMessage = when (lastAction) {
                     summarizeLabel -> lastMessage.summarize
                     paraphraseLabel -> lastMessage.paraphrase
-                    rephraseLabel -> lastMessage.rephrase // If "Rephrase" should store paraphrased text
-                    expandLabel -> lastMessage.expand // If "Expand" should store summarized text
+                    rephraseLabel -> lastMessage.rephrase
+                    expandLabel -> lastMessage.expand
                     bulletPointLabel -> lastMessage.bulletpoint
                     else -> ""
                 }
@@ -172,7 +165,6 @@ fun SummaryScreen(
 
     LaunchedEffect(showSubscribeDialog) {
         if (showSubscribeDialog) {
-            //delay(150) // small delay helps avoid premature jump
             coroutineScope.launch {
                 bringIntoViewRequester.bringIntoView()
             }
@@ -180,7 +172,7 @@ fun SummaryScreen(
     }
 
     LaunchedEffect(section) {
-        delay(300) // wait for Composables to draw
+        delay(300)
 
         when (section.lowercase()) {
             summarizeLabel.lowercase() -> summarizeRequester.bringIntoView()
@@ -189,7 +181,6 @@ fun SummaryScreen(
             expandLabel.lowercase() -> expandRequester.bringIntoView()
             bulletPointLabel.lowercase() -> bulletpointRequester.bringIntoView()
         }
-
     }
 
     LaunchedEffect(cameraImages) {
@@ -203,7 +194,6 @@ fun SummaryScreen(
             Log.d("SummaryScreen", "No images received from SharedImageModel")
         }
     }
-
 
     fun sendActionRequest(action: String, retryCount: Int = 0, maxRetries: Int = 5) {
         val originalAction = localizedActions[action] ?: return
@@ -331,7 +321,7 @@ fun SummaryScreen(
                     }
                 }
             }
-          //  val buttonColor = if (results[textLabel].isNullOrEmpty()) Color(0xFFFAFAFA) else Color.Green
+
             Button(
                 onClick = {
                     summaryScreenViewModel.addResult(textLabel, ocrText)
@@ -347,7 +337,7 @@ fun SummaryScreen(
                     )
                     .border(
                         width = 0.05.dp,
-                        color = Color.LightGray, // Color(0xFFB3B3B3)
+                        color = Color.LightGray,
                         shape = MaterialTheme.shapes.extraLarge
                     ),
                 enabled = results[textLabel].isNullOrEmpty(),
@@ -364,7 +354,7 @@ fun SummaryScreen(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Medium)
             }
-            // 3) Somewhere near the top, show the images you loaded from Room:
+
             textWithImages?.let { (_, imageEntities) ->
                 if (imageEntities.isNotEmpty()) {
                     LazyRow(
@@ -372,7 +362,6 @@ fun SummaryScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) {
                         items(imageEntities) { entity ->
-                            // turn bytearray → Bitmap → ImageBitmap
                             val bitmap = remember(entity.imageData) {
                                 BitmapFactory.decodeByteArray(
                                     entity.imageData,
@@ -411,11 +400,9 @@ fun SummaryScreen(
                 }
             }
 
-            // 4) If you still want to show the original camera images
             cameraImages?.let { triples ->
                 if (triples.isNotEmpty()) {
                     Spacer(Modifier.height(16.dp))
-                   // Text("Camera-scanned images:", fontWeight = FontWeight.SemiBold)
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp)
@@ -461,20 +448,20 @@ fun SummaryScreen(
 
                     SummaryResultCard(
 
-                        action = ActionType.ORIGINAL, // ?
+                        action = ActionType.ORIGINAL,
                         resultText = resultText,
                         fileName = "${textLabel}_${System.currentTimeMillis()}",
                         ttsState = ttsState,
                         selectedLanguage = selectedLanguage,
-                        enableEditing = false, // because no editing button in this case
-                        onSaveEdit = { act, text ->  // <-- add this block
+                        enableEditing = false,
+                        onSaveEdit = { act, text ->
                             summaryScreenViewModel.updateEditedResponse(
                                 act,
                                 text,
                                 originalId = messageId
                             )
                         },
-                        onExpand = { expandedText = resultText }, // NEW
+                        onExpand = { expandedText = resultText },
                     )
                 }
             }
@@ -493,7 +480,7 @@ fun SummaryScreen(
                             originalId = messageId
                         )
                     },
-                    actionType = ActionType.ORIGINAL // pass the correct one here
+                    actionType = ActionType.ORIGINAL
                 )
             }
 
@@ -518,7 +505,7 @@ fun SummaryScreen(
                             )
                             .border(
                                 width = 0.05.dp,
-                                color = Color.LightGray, // Color(0xFFB3B3B3)
+                                color = Color.LightGray,
                                 shape = MaterialTheme.shapes.extraLarge
                             ),
                         enabled = displayAction !in completedActions && processingAction != displayAction,
@@ -568,7 +555,7 @@ fun SummaryScreen(
                                 rephraseLabel -> rephraseRequester
                                 expandLabel -> expandRequester
                                 bulletPointLabel -> bulletpointRequester
-                                else -> remember { BringIntoViewRequester() } // Optional fallback
+                                else -> remember { BringIntoViewRequester() }
                             }
 
                             actionType?.let {
@@ -597,6 +584,7 @@ fun SummaryScreen(
                             }
                         }
                     }
+
                     expandedKey?.let { key ->
                         val type = expandedType!!
                         val latestText = results[key] ?: ""
@@ -612,7 +600,6 @@ fun SummaryScreen(
                                     text,
                                     originalId = messageId
                                 )
-                                // no need to touch expandedKey — reading from `results[key]` will now give you the new text
                             },
                             actionType = type
                         )
@@ -621,17 +608,12 @@ fun SummaryScreen(
             }
     }
 
-    // Show the Subscribe Dialog when the flag is true
     val showAd by summaryScreenViewModel.showInterstitialAd.collectAsState()
 
     if (activity != null) {
         InterstitialAdHandler(
             showAd = showAd,
             activity = activity,
-           // onUserEarnedReward = {
-                // Just one free usage logic:
-          //      summaryScreenViewModel.rewardSingleUsage()
-          //  },
             onAdDismissed = {
                 summaryScreenViewModel.continueAfterAd()
             },
@@ -653,7 +635,6 @@ fun SummaryScreen(
             },
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            // Pass activity safely with null check
             if (activity != null) {
                 SubscribeDialog(
                     onDismiss = {
@@ -668,12 +649,10 @@ fun SummaryScreen(
                         summaryScreenViewModel.rewardUserWithReset()
 
                         Log.d("SubscribeDialog", "User earned reward from watching ad")
-                        // e.g., grant some temporary unlock or credits
                     },
                     activity = activity
                 )
             } else {
-                // Optional: show a fallback UI or log error if activity is null
                 Log.e("SubscribeDialog", "Activity is null, cannot show dialog properly")
             }
         }

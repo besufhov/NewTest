@@ -33,8 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.ui.screens.main.anything.layout.AnythingResponseCard
 import com.kaankivancdilli.summary.ui.screens.main.anything.fields.getLocalizedActionFields
-import com.kaankivancdilli.summary.utils.state.tts.TextToSpeechState
-import java.util.Locale
+import com.kaankivancdilli.summary.ui.state.tts.TextToSpeechState
 
 @Composable
 fun ActionSection(
@@ -45,12 +44,9 @@ fun ActionSection(
     onInputChange: (String, String, String) -> Unit,
     onSend: () -> Unit,
     ttsState: TextToSpeechState,
-    selectedLanguage: Locale,
-    onLanguageSelected: (Locale) -> Unit,
     processingAction: String?, // Pass the loading state
     countdownTimers: Map<String, Int> // For send cooldown
 ) {
- //   val focusRequester = remember { FocusRequester() }
 
     val focusManager = LocalFocusManager.current
 
@@ -63,16 +59,14 @@ fun ActionSection(
             val fieldValue = actionInputs[field] ?: ""
             val textFieldIsFocused = remember { mutableStateOf(false) }
 
-            // 👇 Get localized label if available
             val label = localizedLabels[action]?.find { it.first == field }?.second ?: field
 
-            // 👇 Determine if field should be enabled (only 1st field or others if first has value)
             val firstFieldKey = fields.firstOrNull()
             val firstFieldValue = firstFieldKey?.let { actionInputs[it].orEmpty() } ?: ""
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val fieldHasText = fieldValue.isNotEmpty() // Track text presence
+            val fieldHasText = fieldValue.isNotEmpty()
 
             TextField(
                 value = fieldValue,
@@ -92,7 +86,6 @@ fun ActionSection(
                     .shadow(1.dp, RoundedCornerShape(12.dp))
                     .border(0.3.dp, Color.LightGray, RoundedCornerShape(12.dp))
                     .onFocusChanged { focusState ->
-                        // Safe focus handling
                         runCatching {
                             textFieldIsFocused.value = focusState.isFocused
                         }
@@ -113,29 +106,28 @@ fun ActionSection(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // SEND BUTTON
         val countdown = countdownTimers[action]
         val buttonEnabled = processingAction != action && countdown == null
 
         Button(
             onClick = {
-                focusManager.clearFocus(force = true) // ⬅️ This removes both focus & cursor
+                focusManager.clearFocus(force = true)
                 onSend()
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp), // ⬅️ Increase height
+                .height(48.dp),
             enabled = buttonEnabled,
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (buttonEnabled) Color.Black else Color(0xFFB3B3B3)
             ),
             shape = MaterialTheme.shapes.large,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp) // ⬅️ More padding
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
         ) {
             when {
                 processingAction == action -> {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp), // Slightly bigger spinner
+                        modifier = Modifier.size(24.dp),
                         color = Color.White,
                         strokeWidth = 2.dp
                     )
@@ -144,7 +136,7 @@ fun ActionSection(
                     Text(
                         stringResource(id = R.string.send) + " ($countdown)",
                         color = Color.White,
-                        fontSize = 20.sp, // ⬅️ Bigger font
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -152,24 +144,20 @@ fun ActionSection(
                     Text(
                         stringResource(id = R.string.send),
                         color = Color.White,
-                        fontSize = 20.sp, // ⬅️ Bigger font
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
         }
 
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        // RESPONSE CARD
         responseTexts[action]?.let { response ->
             key(response) {
                 AnythingResponseCard(
                     response = response,
                     ttsState = ttsState,
-                    selectedLanguage = selectedLanguage,
-                    onLanguageSelected = onLanguageSelected
                 )
             }
         }

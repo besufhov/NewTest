@@ -3,7 +3,6 @@ package com.kaankivancdilli.summary.ui.screens.sub.history.screen
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,9 +43,9 @@ import com.kaankivancdilli.summary.ui.screens.sub.history.layout.FullAnythingRes
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
 import com.kaankivancdilli.summary.ui.viewmodel.sub.fullanything.FullAnythingScreenViewModel
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.utils.tts.rememberTextToSpeech
+import com.kaankivancdilli.summary.ui.component.audio.tts.remembertts.rememberTextToSpeech
 import com.kaankivancdilli.summary.ui.viewmodel.main.history.TextHistoryViewModel
-import com.kaankivancdilli.summary.utils.reusable.popup.SubscribeDialog
+import com.kaankivancdilli.summary.ui.component.reusable.popup.SubscribeDialog
 import java.util.Locale
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -58,15 +56,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kaankivancdilli.summary.ui.screens.sub.history.layout.FullAnythingResultFullScreen
-import com.kaankivancdilli.summary.utils.detection.autoDetectLanguage
-import com.kaankivancdilli.summary.utils.admob.adhandler.InterstitialAdHandler
-import com.kaankivancdilli.summary.utils.reusable.design.CustomHalfCurvedTopBar
+import com.kaankivancdilli.summary.core.detection.autoDetectLanguage
+import com.kaankivancdilli.summary.ui.component.admob.adhandler.InterstitialAdHandler
+import com.kaankivancdilli.summary.ui.component.reusable.bar.CustomHalfCurvedTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FullAnythingScreen(
     text: String?,
@@ -77,8 +74,6 @@ fun FullAnythingScreen(
     fullAnythingScreenViewModel: FullAnythingScreenViewModel = hiltViewModel()
 ) {
 
-    val isSubscribed by fullAnythingScreenViewModel.isSubscribed.collectAsState()
-
     val ttsState = rememberTextToSpeech(LocalContext.current)
 
     val savedAnything by textHistoryViewModel.saveAnything.collectAsState()
@@ -87,22 +82,18 @@ fun FullAnythingScreen(
 
     val currentSummarizedText by rememberUpdatedState(newValue = message?.summarize ?: "")
 
-  //  val actions = listOf("Summarize", "Paraphrase", "Rephrase", "Expand", "Bulletpoint")
-
     val anythingLabel = stringResource(R.string.anything)
 
     var lastAction by rememberSaveable { mutableStateOf("") }
 
     val results by fullAnythingScreenViewModel.results.collectAsState()
-    val completedActions by fullAnythingScreenViewModel.completedActions.collectAsState()
     val processingAction by fullAnythingScreenViewModel.processingAction.collectAsState()
 
     var selectedLanguage by rememberSaveable { mutableStateOf(Locale.getDefault()) }
 
-
     val context = LocalContext.current
 
-    val activity = LocalActivity.current // ✅ MODERN WAY/ <-- Get activity
+    val activity = LocalActivity.current
     val subscriptionViewModel: SubscriptionViewModel = hiltViewModel()
 
     val showSubscribeDialog by fullAnythingScreenViewModel.showSubscribeDialog.collectAsState()
@@ -163,8 +154,7 @@ fun FullAnythingScreen(
                     bulletPointLabel -> lastMessage.bulletpoint
                     else -> ""
                 }
-                //results = results.toMutableMap().apply { this[lastAction] = newMessage }
-               // completedActions = completedActions.toMutableSet().apply { add(lastAction) }
+
                 fullAnythingScreenViewModel.saveResultForAction(lastAction, newMessage)
                 fullAnythingScreenViewModel.setProcessingAction(null)
 
@@ -172,10 +162,8 @@ fun FullAnythingScreen(
         }
     }
 
-
     LaunchedEffect(showSubscribeDialog) {
         if (showSubscribeDialog) {
-            //delay(150) // small delay helps avoid premature jump
             coroutineScope.launch {
                 bringIntoViewRequester.bringIntoView()
             }
@@ -183,7 +171,7 @@ fun FullAnythingScreen(
     }
 
     LaunchedEffect(initialSection) {
-        delay(300) // wait for Composables to draw
+        delay(300)
         when (initialSection.lowercase()) {
             summarizeLabel.lowercase() -> summarizeRequester.bringIntoView()
             paraphraseLabel.lowercase() -> paraphraseRequester.bringIntoView()
@@ -262,8 +250,6 @@ fun FullAnythingScreen(
         }
     }
 
-
-
     Scaffold(
         topBar = {
             CustomHalfCurvedTopBar(
@@ -282,7 +268,6 @@ fun FullAnythingScreen(
                 .padding(8.dp)
         ) {
 
-            // Labeled fields
             if (fields.isNotEmpty()) {
                 Column {
                     fields.forEach { (label, value) ->
@@ -299,10 +284,9 @@ fun FullAnythingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ✅ new: just capture the key + type
             var expandedKey by remember { mutableStateOf<String?>(null) }
             var expandedType by remember { mutableStateOf<ActionType?>(null) }
-            // Action buttons
+
             actions.forEach { displayAction ->
                 val localizedLabel = localizedActions[displayAction] ?: displayAction.toString()
                 Button(
@@ -318,10 +302,9 @@ fun FullAnythingScreen(
                         )
                         .border(
                             width = 0.05.dp,
-                            color = Color.LightGray, // Color(0xFFB3B3B3)
+                            color = Color.LightGray,
                             shape = MaterialTheme.shapes.extraLarge
                         ),
-                   // enabled = action !in completedActions && processingAction != action,
                     enabled = results[displayAction].isNullOrEmpty() && processingAction != displayAction,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
@@ -344,11 +327,6 @@ fun FullAnythingScreen(
                             fontWeight = FontWeight.Medium)
                     }
                 }
-
-                // ✅ Stick banner right after Summarize button (real-time, subscription-aware)
-         //       if (displayAction == summarizeLabel && !isSubscribed) {
-             //       AdMobBanner()
-            //    }
 
                 results[displayAction]?.let { resultText ->
                     if (resultText.isNotEmpty()) {
@@ -415,7 +393,6 @@ fun FullAnythingScreen(
                                 text,
                                 originalId = messageId
                             )
-                            // no need to touch expandedKey — reading from `results[key]` will now give you the new text
                         },
                         actionType = type
                     )
@@ -424,20 +401,12 @@ fun FullAnythingScreen(
         }
     }
 
-//.bringIntoViewRequester(bringIntoViewRequester)
-    // Show the Subscribe Dialog when the flag is true
-
-
     val showAd by fullAnythingScreenViewModel.showInterstitialAd.collectAsState()
 
     if (activity != null) {
         InterstitialAdHandler(
             showAd = showAd,
             activity = activity,
-            // onUserEarnedReward = {
-            // Just one free usage logic:
-            //      summaryScreenViewModel.rewardSingleUsage()
-            //  },
             onAdDismissed = {
                 fullAnythingScreenViewModel.continueAfterAd()
             },
@@ -459,7 +428,7 @@ fun FullAnythingScreen(
             },
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            // Pass activity safely with null check
+
             if (activity != null) {
                 SubscribeDialog(
                     onDismiss = {
@@ -474,31 +443,12 @@ fun FullAnythingScreen(
                         fullAnythingScreenViewModel.rewardUserWithReset()
 
                         Log.d("SubscribeDialog", "User earned reward from watching ad")
-                        // e.g., grant some temporary unlock or credits
                     },
                     activity = activity
                 )
             } else {
-                // Optional: show a fallback UI or log error if activity is null
                 Log.e("SubscribeDialog", "Activity is null, cannot show dialog properly")
             }
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

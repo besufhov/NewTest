@@ -3,8 +3,6 @@ package com.kaankivancdilli.summary.utils.documents.extraction.docx
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import java.io.InputStream
 
-// DOCX text extraction function
-
 fun extractTextFromDocx(inputStream: InputStream, maxChars: Int = 16000): String {
     val text = StringBuilder()
 
@@ -33,16 +31,5 @@ fun extractTextFromDocx(inputStream: InputStream, maxChars: Int = 16000): String
         e.printStackTrace()
     }
 
-    return text.toString()
-}
-
-
-
-fun extractTextFromDocxVanilla(inputStream: InputStream): String {
-    val doc = XWPFDocument(inputStream)
-    val text = StringBuilder()
-    for (para in doc.paragraphs) {
-        text.append(para.text).append("\n")
-    }
     return text.toString()
 }

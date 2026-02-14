@@ -14,7 +14,7 @@ data class SaveTexts(
     val bulletpoint: String,
     val ocrText: String,
     val isUserMessage: Boolean,
- //   val imageData: ByteArray?,
+
     @ColumnInfo(name = "timestamp") val timestamp: Long = System.currentTimeMillis()
 )
 

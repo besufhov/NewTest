@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
-import com.kaankivancdilli.summary.data.repository.anything.AnythingScreenRepository
+import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.network.rest.RestApiManager
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
-import com.kaankivancdilli.summary.utils.state.usage.FreeUsageTracker
-import com.kaankivancdilli.summary.utils.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
+import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.utils.billing.BillingManager
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.core.billing.manager.BillingManager
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,6 @@ import javax.inject.Inject
 class FullAnythingScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val anythingScreenRepository: AnythingScreenRepository,
-   // private val webSocketManager: WebSocketManager,
     private val subscriptionChecker: SubscriptionChecker,
     private val billingManager: BillingManager,
     savedStateHandle: SavedStateHandle,
@@ -36,7 +35,6 @@ class FullAnythingScreenViewModel @Inject constructor(
 
     ) : ViewModel() {
 
-    // ✅ Create a fresh instance yourself (not via Hilt)
     private val restApiManager = RestApiManager()
 
     private val _saveAnything = MutableStateFlow<List<SaveAnything>>(emptyList())
@@ -90,24 +88,13 @@ class FullAnythingScreenViewModel @Inject constructor(
         _completedActions.value = completedSet
     }
 
-    fun addResult(action: String, text: String) {
-        val updated = _results.value.toMutableMap()
-        updated[action] = text
-        _results.value = updated
-    }
-
     fun saveResultForAction(actionKey: String, text: String) {
-        // update results map
         _results.value = _results.value.toMutableMap()
             .also { it[actionKey] = text }
-
-        // mark this action completed
         _completedActions.value = _completedActions.value + actionKey
     }
 
     private var _continueAfterAd: (() -> Unit)? = null
-
-    // Flag to skip interstitial once after reset from rewarded ad
     private var skipInterstitialOnceAfterReset = false
 
     private val _showInterstitialAd = MutableStateFlow(false)
@@ -204,7 +191,6 @@ class FullAnythingScreenViewModel @Inject constructor(
             anythingScreenRepository.getAnythingTextById(textId)?.let { saved ->
                 _saveAnything.value = listOf(saved)
 
-                // 1) build your map + completed set
                 val initialResults   = mutableMapOf<String,String>()
                 val initialCompleted = mutableSetOf<String>()
 
@@ -233,22 +219,10 @@ class FullAnythingScreenViewModel @Inject constructor(
                 }
 
                 originalSummarizedText = saved.summarize
-                // … same for rephrase, expand, bulletpoint …
 
-                // 2) atomically push into your StateFlows
                 updateResultsAndCompletedActions(initialResults, initialCompleted)
             }
         }
-    }
-
-    fun triggerInterstitialAd() {
-        if (skipInterstitialOnceAfterReset) {
-            // Skip showing interstitial this time, reset the flag
-            skipInterstitialOnceAfterReset = false
-            Log.d("AnythingViewModel", "Skipping interstitial ad due to recent reset")
-            return
-        }
-        _showInterstitialAd.value = true
     }
 
     fun resetInterstitialAdTrigger() {
@@ -274,13 +248,6 @@ class FullAnythingScreenViewModel @Inject constructor(
         }
     }
 
-    fun rewardSingleUsage() {
-        viewModelScope.launch {
-            //   freeUsageTracker.incrementAndGet()
-            Log.d("AnythingViewModel", "Granted 1 free usage after rewarded interstitial")
-        }
-    }
-
     fun continueAfterAd() {
         _continueAfterAd?.invoke()
         _continueAfterAd = null
@@ -291,13 +258,6 @@ class FullAnythingScreenViewModel @Inject constructor(
             restApiManager.texts.collect { result ->
                 when (result) {
                     is ResultState.Success -> {
-
-                       //     val usageCount = freeUsageTracker.getCount()
-                     //       if (usageCount <= 30) {
-                     //           freeUsageTracker.incrementAndGet()
-                     //           Log.d("AnythingVM", "Free usage incremented to ${usageCount + 1}")
-                      //      }
-
                             val extractedText = result.data
                             val existing = _saveAnything.value.firstOrNull()
                             val updated = existing?.copy(
@@ -322,11 +282,6 @@ class FullAnythingScreenViewModel @Inject constructor(
                                 )
                             }
 
-                      //      val isSubbed = subscriptionChecker.isUserSubscribed()
-                     //   if (!isSubbed && usageCount % 6 == 0) { // 0, 2, 4... → before incrementing, so acts on 1st, 3rd, 5th...
-                     //       triggerInterstitialAd()
-                    //    }
-
                         _isSummarizedText.value = false
                         _isParaphrasedText.value = false
                         _isRephrasedText.value = false
@@ -341,8 +296,6 @@ class FullAnythingScreenViewModel @Inject constructor(
         }
     }
 
-
-
     fun updateEditedResponse(action: ActionType, editedText: String, originalId: Int?) {
         val existing = _saveAnything.value.firstOrNull() ?: return
         val updated = when (action) {
@@ -353,7 +306,7 @@ class FullAnythingScreenViewModel @Inject constructor(
             ActionType.BULLETPOINT -> existing.copy(bulletpoint = editedText)
             else -> existing
         }
-        // ✅ This updates the UI map!
+
         val actionKey = when (action) {
             ActionType.SUMMARIZE    -> summarizeLabel
             ActionType.PARAPHRASE  -> paraphraseLabel
@@ -363,15 +316,13 @@ class FullAnythingScreenViewModel @Inject constructor(
             ActionType.ORIGINAL    -> "Original"
         }
 
-        saveResultForAction(actionKey, editedText) // This updates the UI!
+        saveResultForAction(actionKey, editedText)
 
         viewModelScope.launch {
             anythingScreenRepository.saveAnything(updated)
             _saveAnything.value = listOf(updated)
         }
     }
-
-
 
     private suspend fun saveAnything(
         id: Int?, summarize: String, rephrase: String, paraphrase: String, expand: String, bulletpoint: String, isUserMessage: Boolean
@@ -396,9 +347,9 @@ class FullAnythingScreenViewModel @Inject constructor(
                 birthday = "",
                 source = ""
             )
-            anythingScreenRepository.saveAnything(newText) // Insert
+            anythingScreenRepository.saveAnything(newText)
         } else {
-            // ID exists → Update existing entry
+
             val existingText = anythingScreenRepository.getAnythingTextById(id)
             if (existingText != null) {
                 val updatedText = existingText.copy(
@@ -408,9 +359,8 @@ class FullAnythingScreenViewModel @Inject constructor(
                     expand = if (expand.isNotEmpty()) expand else existingText.expand,
                     bulletpoint = if (bulletpoint.isNotEmpty()) bulletpoint else existingText.bulletpoint,
                 )
-                anythingScreenRepository.saveAnything(updatedText) // Update
+                anythingScreenRepository.saveAnything(updatedText)
             }
         }
     }
-
 }

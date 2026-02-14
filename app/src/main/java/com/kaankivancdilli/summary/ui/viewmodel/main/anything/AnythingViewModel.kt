@@ -6,14 +6,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
-import com.kaankivancdilli.summary.data.repository.anything.AnythingScreenRepository
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.network.rest.RestApiManager
-import com.kaankivancdilli.summary.utils.state.usage.FreeUsageTracker
-import com.kaankivancdilli.summary.utils.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
+import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.utils.billing.BillingManager
+import com.kaankivancdilli.summary.core.billing.manager.BillingManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -22,9 +22,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-
-
 
 @HiltViewModel
 class AnythingViewModel @Inject constructor(
@@ -40,13 +37,10 @@ class AnythingViewModel @Inject constructor(
 
     private var _continueAfterAd: (() -> Unit)? = null
 
-    // Flag to skip interstitial once after reset from rewarded ad
     private var skipInterstitialOnceAfterReset = false
 
     private val _showInterstitialAd = MutableStateFlow(false)
     val showInterstitialAd: StateFlow<Boolean> = _showInterstitialAd
-
-    //private val webSocketManager = WebSocketManager()
 
     private val _saveAnything = MutableStateFlow<List<SaveAnything>>(emptyList())
     val saveAnything: StateFlow<List<SaveAnything>> = _saveAnything
@@ -57,10 +51,8 @@ class AnythingViewModel @Inject constructor(
     private val _isSummarizedText = MutableStateFlow(false)
     val isSummarizedText: StateFlow<Boolean> = _isSummarizedText
 
-    // 🔥 Store the last selected action type (expandedAction)
     private val _selectedActionType = MutableStateFlow<String?>(null)
     val selectedActionType: StateFlow<String?> = _selectedActionType
-
 
     private val _processedResponses = mutableSetOf<String>()
 
@@ -106,7 +98,6 @@ class AnythingViewModel @Inject constructor(
         checkInitialSubscriptionStatus()
     }
 
-    // A function to convert the translated action name back to its English key
     fun getEnglishKeyFromType(translatedType: String): String {
         return when (translatedType) {
             context.getString(R.string.tv_show) -> "tv_show"
@@ -115,13 +106,12 @@ class AnythingViewModel @Inject constructor(
             context.getString(R.string.article) -> "article"
             context.getString(R.string.biography) -> "biography"
             context.getString(R.string.anime) -> "anime"
-            else -> "unknown"  // Default if no match
+            else -> "unknown"
         }
     }
 
     fun triggerInterstitialAd() {
         if (skipInterstitialOnceAfterReset) {
-            // Skip showing interstitial this time, reset the flag
             skipInterstitialOnceAfterReset = false
             Log.d("AnythingViewModel", "Skipping interstitial ad due to recent reset")
             return
@@ -138,7 +128,6 @@ class AnythingViewModel @Inject constructor(
             freeUsageTracker.resetCount()
             Log.d("AnythingViewModel", "Free usage count reset after rewarded ad")
 
-            // Set flag to skip interstitial ad once after reset
             skipInterstitialOnceAfterReset = true
 
             hideSubscribeDialog()
@@ -149,14 +138,6 @@ class AnythingViewModel @Inject constructor(
             }
         }
     }
-
-    fun rewardSingleUsage() {
-        viewModelScope.launch {
-         //   freeUsageTracker.incrementAndGet()
-            Log.d("AnythingViewModel", "Granted 1 free usage after rewarded interstitial")
-        }
-    }
-
 
     fun sendMessage(content: String, type: String, fields: Map<String, String>) {
         if (content.isBlank()) return
@@ -183,7 +164,6 @@ class AnythingViewModel @Inject constructor(
         }
     }
 
-
     private fun sendToServer(content: String) {
         restApiManager.sendMessage(context.getString(R.string.add_title) + content)
     }
@@ -196,8 +176,6 @@ class AnythingViewModel @Inject constructor(
     fun setSubscriptionStatus(value: Boolean) {
         _isSubscribed.value = value
     }
-
-
 
     fun subscribeUser(activity: Activity, subscriptionViewModel: SubscriptionViewModel) {
         billingManager.startConnection {
@@ -218,7 +196,7 @@ class AnythingViewModel @Inject constructor(
             }
 
             billingManager.setSubscriptionListener { isSubscribed ->
-                // This block runs if the user either successfully subscribes or cancels
+
                 if (!isSubscribed) {
                     // Reset loading/spinner state
                     _selectedActionType.value = null
@@ -251,13 +229,6 @@ class AnythingViewModel @Inject constructor(
         Log.d("AnythingScreenViewModel", "Pending message cleared")
     }
 
-    fun deleteAnything(message: SaveAnything) {
-        viewModelScope.launch {
-            anythingScreenRepository.deleteAnything(message) // Delete from Room
-            _saveAnything.value = _saveAnything.value.filterNot { it.id == message.id } // Update UI
-        }
-    }
-
     private fun checkInitialSubscriptionStatus() {
         viewModelScope.launch {
             val isNowSubscribed = subscriptionChecker.isUserSubscribed()
@@ -265,7 +236,6 @@ class AnythingViewModel @Inject constructor(
             Log.d("AnythingViewModel", "Initial subscription check: $isNowSubscribed")
         }
     }
-
 
     private fun observeTexts() {
         viewModelScope.launch {
@@ -321,9 +291,7 @@ class AnythingViewModel @Inject constructor(
                                 _isSummarizedText.value = false
 
                                 val isSubbed = subscriptionChecker.isUserSubscribed()
-                              //  if (!isSubbed) {
-                               //     triggerInterstitialAd()
-                             //   }
+
                                 if (!isSubbed && usageCount > 0 && usageCount % 6 == 0) {
                                     triggerInterstitialAd()
                                 }
@@ -331,9 +299,6 @@ class AnythingViewModel @Inject constructor(
                         } else {
                             _saveAnything.update { it + message }
                         }
-
-
-
 
                         Log.d("AnythingViewModel", "Updated saveAnything list: $message")
                     }
@@ -347,7 +312,6 @@ class AnythingViewModel @Inject constructor(
             }
         }
     }
-
 
     private suspend fun saveAnything(
         summary: String,

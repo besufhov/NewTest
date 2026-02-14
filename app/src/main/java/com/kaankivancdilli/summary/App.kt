@@ -9,7 +9,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Required for pdfbox-android to load fonts/resources properly
         PDFBoxResourceLoader.init(applicationContext)
     }
 }

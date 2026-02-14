@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.utils.state.network.ResultState
+import com.kaankivancdilli.summary.ui.state.network.ResultState
 
-// ✅ Custom Saver for ResultState
 val ResultStateSaver: Saver<ResultState<String>, Any> = object : Saver<ResultState<String>, Any> {
     override fun SaverScope.save(value: ResultState<String>): Any {
         return when (value) {
@@ -43,7 +42,3 @@ fun getLocalizedTypeFromKey(typeKey: String, context: Context): String {
         else -> typeKey  // Default case if no match
     }
 }
-
-// val type = "tv_show"  // This will come from your database (English key)
-//  val localizedType = getLocalizedTypeFromKey(type, context)
-// Now, localizedType will show the translated string, like "Dizi" or "TV Show"

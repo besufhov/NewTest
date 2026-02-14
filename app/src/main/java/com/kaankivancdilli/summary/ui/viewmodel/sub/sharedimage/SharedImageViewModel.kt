@@ -18,7 +18,6 @@ class SharedImageViewModel @Inject constructor(): ViewModel() {
         _imageData.value = images.takeIf { it?.isNotEmpty() == true } ?: emptyList()
     }
 
-
     fun clearImageData() {
         _imageData.value = null
     }

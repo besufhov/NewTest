@@ -7,8 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.net.Uri
-import com.kaankivancdilli.summary.data.repository.photomain.OcrRepository
-import com.kaankivancdilli.summary.data.repository.photomain.ResultStateOCR
+import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository
+import com.kaankivancdilli.summary.ui.state.ocr.ResultStateOCR
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,13 +27,11 @@ object OCRWorker {
     val ocrResults = _ocrResults.asSharedFlow()
 
     private val workerScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val processingMutex = Mutex() // Ensures only one image is processed at a time
+    private val processingMutex = Mutex()
 
-    // Reusable repository; context is applicationContext only
     @SuppressLint("StaticFieldLeak")
     private var ocrRepository: OcrRepository? = null
 
-    /** Initialize OCRWorker once, safely */
     fun initialize(context: Context) {
         if (ocrRepository == null) {
             ocrRepository = OcrRepository(context.applicationContext)
@@ -71,7 +69,6 @@ object OCRWorker {
         }
     }
 
-    /** Safely close OCR resources */
     fun close() {
         workerScope.launch {
             try { ocrRepository?.closeRecognizer() } catch (_: Throwable) {}
@@ -84,10 +81,3 @@ object OCRWorker {
         else -> ""
     }
 }
-
-
-
-
-
-
-

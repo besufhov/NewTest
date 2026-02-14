@@ -6,7 +6,7 @@ import com.kaankivancdilli.summary.data.local.dao.image.ImageDao
 import com.kaankivancdilli.summary.data.local.dao.text.TextDao
 import com.kaankivancdilli.summary.data.model.local.image.ImageEntity
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
-import com.kaankivancdilli.summary.ui.viewmodel.sub.summary.bitmapToByteArray
+import com.kaankivancdilli.summary.utils.bitmap.bitmapToByteArray
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -16,16 +16,15 @@ class SummaryScreenRepository @Inject constructor(
     private val imageDao: ImageDao
 ) {
 
-    // in your repo
     suspend fun saveTextWithImages(
         text: SaveTexts,
         images: List<Triple<String,Bitmap,String>>
     ): Long {
-        // 1) insert or replace the text row
-        val textId = textDao.insertMessage(text)    // returns the new ID
-        // 2) clear any old images
+
+        val textId = textDao.insertMessage(text)
+
         imageDao.deleteByTextId(textId.toInt())
-        // 3) insert the images under textId
+
         images.forEach { (name, bmp, recognized) ->
             imageDao.insert(
                 ImageEntity(
@@ -39,7 +38,6 @@ class SummaryScreenRepository @Inject constructor(
         return textId
     }
 
-
     fun getTextWithImages(textId: Int): Flow<Pair<SaveTexts?, List<ImageEntity>>> =
         textDao.getSavedTextByIdFlow(textId)
             .combine(imageDao.getImagesForText(textId)) { txt, imgs ->
@@ -50,12 +48,11 @@ class SummaryScreenRepository @Inject constructor(
         val existingText = textDao.getLatestEntryForOcr(message.ocrText)
 
         if (existingText != null) {
-            // If summarizing, update only the summarize field
+
             if (message.summarize.isNotBlank()) {
                 textDao.updateSummary(message.ocrText, message.summarize)
             }
 
-            // If paraphrasing, update only the paraphrase field
             if (message.paraphrase.isNotBlank()) {
                 textDao.updateParaphrase(message.ocrText, message.paraphrase)
             }
@@ -73,7 +70,7 @@ class SummaryScreenRepository @Inject constructor(
             }
 
         } else {
-            // If no entry exists, insert the new message
+
             textDao.insertMessage(message)
         }
     }
@@ -90,8 +87,7 @@ class SummaryScreenRepository @Inject constructor(
 
     fun getTextHistory(): Flow<List<SaveTexts>> = textDao.getAllMessages()
 
-    suspend fun deleteText(message: SaveTexts) { // New delete function
+    suspend fun deleteText(message: SaveTexts) {
         textDao.deleteMessage(message)
     }
-
 }

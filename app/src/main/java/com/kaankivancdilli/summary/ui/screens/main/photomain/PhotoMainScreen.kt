@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.FlowColumnScopeInstance.weight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -34,7 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kaankivancdilli.summary.ui.viewmodel.main.photomain.OcrViewModel
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.handler.PageBoundedOcrHandler
-import com.kaankivancdilli.summary.ui.component.photomain.text.PreviewTextView
+import com.kaankivancdilli.summary.ui.component.photomain.text.preview.PreviewTextView
 import androidx.compose.ui.platform.*
 import com.kaankivancdilli.summary.ui.component.photomain.image.ImagePreviewRow
 import java.util.UUID
@@ -46,9 +45,9 @@ import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.kaankivancdilli.summary.data.repository.photomain.OcrRepository
-import com.kaankivancdilli.summary.ui.component.photomain.layout.PageDetectionOverlay
-import com.kaankivancdilli.summary.utils.state.texttoimage.TextImageState
+import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository
+import com.kaankivancdilli.summary.ui.component.photomain.detection.PageDetectionOverlay
+import com.kaankivancdilli.summary.ui.state.texttoimage.TextImageState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
@@ -65,8 +64,6 @@ import com.kaankivancdilli.summary.ui.component.photomain.ocr.cameracontroller.O
 import com.kaankivancdilli.summary.ui.component.photomain.ocr.processor.OcrProcessor
 import com.kaankivancdilli.summary.ui.viewmodel.sub.sharedimage.SharedImageViewModel
 
-
-
 @Composable
 fun PhotoMainScreen(
     navController: NavController,
@@ -75,16 +72,16 @@ fun PhotoMainScreen(
     sharedImageViewModel: SharedImageViewModel,
     ocrViewModel: OcrViewModel
 ) {
+
+    var showPreviewRow by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val density = LocalDensity.current
-
     val capturedImages by textImageState.capturedImages.collectAsState()
-    var showPreviewRow by remember { mutableStateOf(false) } // ✅ Toggle state
-
     val ocrRepository = remember { OcrRepository(context) }
-
     val cameraController = remember { OcrCameraController() }
+
     val ocrProcessor = remember {
         OcrProcessor(ocrRepository, pageBoundedOcrHandler)
     }
@@ -92,7 +89,6 @@ fun PhotoMainScreen(
     val viewModelStoreOwner = remember(navController) {
         navController.getViewModelStoreOwner(navController.graph.id)
     }
-
 
     val ocrViewModel: OcrViewModel = viewModel(
         viewModelStoreOwner,
@@ -102,8 +98,6 @@ fun PhotoMainScreen(
             }
         }
     )
-
-
     val capturedImage by ocrViewModel.capturedImage.collectAsState(initial = null)
     val recognizedTexts by textImageState.recognizedTexts.collectAsState()
 
@@ -133,11 +127,11 @@ fun PhotoMainScreen(
             }
         }
     )
+
     val deleteImageTextLabel = stringResource(R.string.delete_image)
     val deleteImageTextAskLabel = stringResource(R.string.delete_ask)
     val yesLabel = stringResource(R.string.yes)
     val noLabel = stringResource(R.string.no)
-
 
     LaunchedEffect(Unit) {
         permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -188,14 +182,13 @@ fun PhotoMainScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(cameraHeight) // Restrict to Camera Preview height
-                .align(Alignment.TopCenter), // Keeps it inside Camera Preview
-            contentAlignment = Alignment.BottomCenter // Anchors content at the bottom
+                .height(cameraHeight)
+                .align(Alignment.TopCenter),
+            contentAlignment = Alignment.BottomCenter
         ) {
             Box(
-                modifier = Modifier.offset(y = -50.dp) // Moves the button slightly higher
+                modifier = Modifier.offset(y = -50.dp)
             ) {
-                // 🔴 Focus Button - Positioned slightly higher
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -205,7 +198,6 @@ fun PhotoMainScreen(
                 )
             }
 
-            // 🟢 Gallery (Pick Image) Button - Right of the Focus Button and vertically centered with it
             IconButton(
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -216,7 +208,7 @@ fun PhotoMainScreen(
                 },
                 modifier = Modifier
                     .size(50.dp)
-                    .offset(x = 75.dp, y = -50.dp) // Moves to the right & aligns vertically with focus button
+                    .offset(x = 75.dp, y = -50.dp)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.PhotoLibrary,
@@ -229,7 +221,6 @@ fun PhotoMainScreen(
 
         if (cameraHeight > 0.dp) {
             var isExpanded by remember { mutableStateOf(false) }
-            //val baseHeight = screenHeight - cameraHeight - 56.dp
             val baseHeight = screenHeight - cameraHeight - if (Build.VERSION.SDK_INT < 35) 56.dp else 0.dp
             val expandedHeight = screenHeight - baseHeight + 56.dp
             val animatedHeight by animateDpAsState(
@@ -239,11 +230,8 @@ fun PhotoMainScreen(
             )
 
             PageDetectionOverlay(pageBoundedOcrHandler)
-// add at top of composable
             var showDeleteConfirmation by remember { mutableStateOf(false) }
             var deleteIndex by remember { mutableStateOf(-1) }
-            // ✅ Initially hidden ImagePreviewRow
-            // ✅ Show ImagePreviewRow even if there's 1 image
             if (showPreviewRow && capturedImages.isNotEmpty()) {
                 ImagePreviewRow(
                     capturedImages = capturedImages,
@@ -259,7 +247,7 @@ fun PhotoMainScreen(
             if (showDeleteConfirmation) {
                 AlertDialog(
                     onDismissRequest = { showDeleteConfirmation = false },
-                    containerColor = Color.LightGray, // 🔘 Light gray background
+                    containerColor = Color.LightGray,
                     title = { Text(text = deleteImageTextLabel, color = Color.Black) },
                     text = { Text(text = deleteImageTextAskLabel, color = Color.Black) },
                     confirmButton = {
@@ -301,12 +289,11 @@ fun PhotoMainScreen(
                 )
             }
 
-
             PreviewTextView(
                 recognizedTexts = recognizedTexts,
                 onToggleExpand = { isExpanded = !isExpanded },
                 onDeleteImage = { index ->
-                    if (capturedImages.isNotEmpty()) { // ✅ Only show dialog if there are images
+                    if (capturedImages.isNotEmpty()) {
                         deleteIndex = index
                         showDeleteConfirmation = true
                     }
@@ -321,7 +308,6 @@ fun PhotoMainScreen(
                         } else {
                             Log.e("Navigation", "No images captured, not navigating")
                         }
-                        // ✅ Clear images and texts after navigating
                         textImageState.updateCapturedImages(emptyList())
                     } else {
                         Log.e("Navigation", "Empty text, not navigating")
@@ -334,37 +320,35 @@ fun PhotoMainScreen(
             )
         }
 
-        // ✅ Show button only if capturedImages is not empty
         if (capturedImages.isNotEmpty()) {
             val latestImage = capturedImages.last().second
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth() // Ensures alignment relative to camera preview width
-                    .height(cameraHeight) // Restrict to camera preview height
+                    .fillMaxWidth()
+                    .height(cameraHeight)
             ) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomEnd) // ✅ Puts it at bottom-right of camera preview
-                        .padding(16.dp) // ✅ Space from edges
-                        .clip(RoundedCornerShape(4.dp)) // ✅ Clips the border to match shape
-                        .border(3.dp, Color.Black, RoundedCornerShape(4.dp)) // ✅ Black border
-                        .clickable { showPreviewRow = !showPreviewRow } // ✅ Click to toggle
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .border(3.dp, Color.Black, RoundedCornerShape(4.dp))
+                        .clickable { showPreviewRow = !showPreviewRow }
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(latestImage),
                         contentDescription = "Latest Captured Image",
-                        modifier = Modifier.size(60.dp, 90.dp), // Adjust as needed
+                        modifier = Modifier.size(60.dp, 90.dp),
                         contentScale = ContentScale.Crop
                     )
 
-                    // ✅ Image Counter at Top-Right
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(4.dp)
                             .background(Color.Black, CircleShape)
-                            .size(24.dp), // Adjust size as needed
+                            .size(24.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

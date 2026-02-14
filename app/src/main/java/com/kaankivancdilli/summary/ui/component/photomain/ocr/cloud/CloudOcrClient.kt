@@ -12,7 +12,6 @@ import org.json.JSONObject
 
 class CloudOcrClient {
 
-    // 🔥 HARDCODE YOUR API KEY HERE
     private val apiKey = "AIzaSyDKswgXx933-BPWYEFNK_m4nubWzawPkt4"
 
     private val client = OkHttpClient()
@@ -34,7 +33,6 @@ class CloudOcrClient {
 
             val body = jsonRequest.toString().toRequestBody(JSON)
 
-            // Build request URL with the hardcoded key
             val url = "https://vision.googleapis.com/v1/images:annotate?key=$apiKey"
 
             val request = Request.Builder()

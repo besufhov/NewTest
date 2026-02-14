@@ -14,14 +14,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // Provide ChatRepository
     @Provides
     @Singleton
     fun provideTextRepository(textDao: TextDao, imageDao: ImageDao): SummaryScreenRepository {
         return SummaryScreenRepository(textDao, imageDao)
     }
 
-    // Provide WebSocket Manager
     @Provides
     @Singleton
     fun provideWebSocketManager(): WebSocketManager = WebSocketManager()
