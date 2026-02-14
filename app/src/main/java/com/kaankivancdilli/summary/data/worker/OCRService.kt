@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.component.photomain.ocr.service
+package com.kaankivancdilli.summary.data.worker
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -2,7 +2,7 @@ package com.kaankivancdilli.summary.di.module.app
 
 import com.kaankivancdilli.summary.data.local.dao.image.ImageDao
 import com.kaankivancdilli.summary.data.local.dao.text.TextDao
-import com.kaankivancdilli.summary.data.repository.sub.summary.SummaryScreenRepository
+import com.kaankivancdilli.summary.data.repository.sub.SummaryScreenRepository
 import com.kaankivancdilli.summary.network.ws.WebSocketManager
 import dagger.Module
 import dagger.Provides

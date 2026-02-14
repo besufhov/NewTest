@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
 import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
-import com.kaankivancdilli.summary.data.repository.sub.summary.SummaryScreenRepository
-import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.data.repository.sub.SummaryScreenRepository
+import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

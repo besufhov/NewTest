@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.component.photomain.ocr.handler
+package com.kaankivancdilli.summary.core.handler.photomain
 
 import android.content.Context
 import android.graphics.ImageFormat

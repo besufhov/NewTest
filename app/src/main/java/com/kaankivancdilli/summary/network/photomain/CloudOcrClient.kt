@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.component.photomain.ocr.cloud
+package com.kaankivancdilli.summary.network.photomain
 
 import android.graphics.Bitmap
 import android.util.Base64

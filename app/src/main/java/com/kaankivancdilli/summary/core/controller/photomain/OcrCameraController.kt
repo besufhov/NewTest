@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.component.photomain.ocr.cameracontroller
+package com.kaankivancdilli.summary.core.controller.photomain
 
 import android.content.Context
 import android.util.Log

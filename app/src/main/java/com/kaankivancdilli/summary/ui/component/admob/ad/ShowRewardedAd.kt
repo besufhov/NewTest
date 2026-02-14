@@ -14,8 +14,8 @@ fun showRewardedAd(activity: Activity, onUserEarnedReward: () -> Unit) {
 
     RewardedAd.load(
         activity,
-        "ca-app-pub-7431967243613151/9613852245",
-       // "ca-app-pub-3940256099942544/5224354917", // test
+        "ca-app-pub-3940256099942544/5224354917",
+       // , // test
         adRequest,
         object : RewardedAdLoadCallback() {
             override fun onAdLoaded(rewardedAd: RewardedAd) {

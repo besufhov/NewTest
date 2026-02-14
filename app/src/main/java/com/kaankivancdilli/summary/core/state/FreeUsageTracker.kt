@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.state.usage
+package com.kaankivancdilli.summary.core.state
 
 import android.content.Context
 import androidx.datastore.core.DataStore

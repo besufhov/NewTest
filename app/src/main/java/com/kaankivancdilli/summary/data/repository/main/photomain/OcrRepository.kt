@@ -18,7 +18,7 @@ import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.ui.component.photomain.ocr.helper.TesseractOcrHelper
+import com.kaankivancdilli.summary.data.photomain.TesseractOcrHelper
 import com.kaankivancdilli.summary.ui.state.ocr.ResultStateOCR
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await

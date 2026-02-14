@@ -4,7 +4,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
+import com.kaankivancdilli.summary.core.state.FreeUsageTracker
 import com.kaankivancdilli.summary.core.billing.manager.BillingManager
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

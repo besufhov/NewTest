@@ -171,7 +171,6 @@ fun TextEditor(
                 modifier = (
                         if (text.isNotEmpty()) Modifier.weight(1.3f) else Modifier.weight(1f)
                         ),
-
                 horizontalArrangement = Arrangement.Center
             )
         }

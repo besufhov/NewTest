@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.component.photomain.ocr.helper
+package com.kaankivancdilli.summary.data.photomain
 
 import android.content.Context
 import android.graphics.Bitmap

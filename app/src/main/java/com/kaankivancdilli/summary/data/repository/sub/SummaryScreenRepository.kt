@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.data.repository.sub.summary
+package com.kaankivancdilli.summary.data.repository.sub
 
 import android.graphics.Bitmap
 import android.util.Log

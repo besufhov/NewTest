@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.ui.state.subscription
+package com.kaankivancdilli.summary.core.domain
 
 import com.kaankivancdilli.summary.core.billing.manager.BillingManager
 import kotlinx.coroutines.suspendCancellableCoroutine

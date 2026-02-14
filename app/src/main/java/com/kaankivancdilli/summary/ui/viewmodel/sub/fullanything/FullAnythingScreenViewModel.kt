@@ -11,8 +11,8 @@ import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
 import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.network.rest.RestApiManager
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
-import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
-import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.core.state.FreeUsageTracker
+import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
 import com.kaankivancdilli.summary.core.billing.manager.BillingManager
 import com.kaankivancdilli.summary.ui.state.network.ResultState
@@ -32,6 +32,7 @@ class FullAnythingScreenViewModel @Inject constructor(
     private val billingManager: BillingManager,
     savedStateHandle: SavedStateHandle,
     private val freeUsageTracker: FreeUsageTracker,
+    private val saveHandler: FullAnythingSaveHandler
 
     ) : ViewModel() {
 
@@ -100,11 +101,6 @@ class FullAnythingScreenViewModel @Inject constructor(
     private val _showInterstitialAd = MutableStateFlow(false)
     val showInterstitialAd: StateFlow<Boolean> = _showInterstitialAd
 
-    private val summarizeLabel    = context.getString(R.string.summarize)
-    private val paraphraseLabel   = context.getString(R.string.paraphrase)
-    private val rephraseLabel   = context.getString(R.string.rephrase)
-    private val expandLabel   = context.getString(R.string.expand)
-    private val bulletpointLabel   = context.getString(R.string.bullet_point)
 
     init {
         savedStateHandle.get<Int>("messageId")?.let { loadSavedAnything(it) }
@@ -191,39 +187,15 @@ class FullAnythingScreenViewModel @Inject constructor(
             anythingScreenRepository.getAnythingTextById(textId)?.let { saved ->
                 _saveAnything.value = listOf(saved)
 
-                val initialResults   = mutableMapOf<String,String>()
-                val initialCompleted = mutableSetOf<String>()
+                val mapper = SavedAnythingMapper(context)
+                val bundle = mapper.map(saved)
 
-                if (saved.summarize.isNotBlank()) {
-                    initialResults[summarizeLabel] = saved.summarize
-                    initialCompleted += summarizeLabel
-                }
-                if (saved.paraphrase.isNotBlank()) {
-                    initialResults[paraphraseLabel] = saved.paraphrase
-                    initialCompleted += paraphraseLabel
-                }
-
-                if (saved.rephrase.isNotBlank()) {
-                    initialResults[rephraseLabel] = saved.rephrase
-                    initialCompleted += rephraseLabel
-                }
-
-                if (saved.expand.isNotBlank()) {
-                    initialResults[expandLabel] = saved.expand
-                    initialCompleted += expandLabel
-                }
-
-                if (saved.bulletpoint.isNotBlank()) {
-                    initialResults[bulletpointLabel] = saved.bulletpoint
-                    initialCompleted += bulletpointLabel
-                }
-
-                originalSummarizedText = saved.summarize
-
-                updateResultsAndCompletedActions(initialResults, initialCompleted)
+                originalSummarizedText = bundle.originalSummarizedText
+                updateResultsAndCompletedActions(bundle.results, bundle.completed)
             }
         }
     }
+
 
     fun resetInterstitialAdTrigger() {
         _showInterstitialAd.value = false
@@ -271,7 +243,7 @@ class FullAnythingScreenViewModel @Inject constructor(
 
                             if (updated != null) {
                                 _saveAnything.value = listOf(updated)
-                                saveAnything(
+                                saveHandler.saveAnything(
                                     id = updated.id.takeIf { it > 0 },
                                     summarize = updated.summarize,
                                     paraphrase = updated.paraphrase,
@@ -280,6 +252,7 @@ class FullAnythingScreenViewModel @Inject constructor(
                                     bulletpoint = updated.bulletpoint,
                                     isUserMessage = false
                                 )
+
                             }
 
                         _isSummarizedText.value = false
@@ -307,14 +280,8 @@ class FullAnythingScreenViewModel @Inject constructor(
             else -> existing
         }
 
-        val actionKey = when (action) {
-            ActionType.SUMMARIZE    -> summarizeLabel
-            ActionType.PARAPHRASE  -> paraphraseLabel
-            ActionType.REPHRASE    -> rephraseLabel
-            ActionType.EXPAND      -> expandLabel
-            ActionType.BULLETPOINT -> bulletpointLabel
-            ActionType.ORIGINAL    -> "Original"
-        }
+        val actionKey = TextAction.fromActionType(action, context)?.label ?: "Original"
+
 
         saveResultForAction(actionKey, editedText)
 
@@ -323,12 +290,24 @@ class FullAnythingScreenViewModel @Inject constructor(
             _saveAnything.value = listOf(updated)
         }
     }
+}
 
-    private suspend fun saveAnything(
-        id: Int?, summarize: String, rephrase: String, paraphrase: String, expand: String, bulletpoint: String, isUserMessage: Boolean
+class FullAnythingSaveHandler @Inject constructor(
+    private val repository: AnythingScreenRepository
+) {
+
+    suspend fun saveAnything(
+        id: Int?,
+        summarize: String,
+        rephrase: String,
+        paraphrase: String,
+        expand: String,
+        bulletpoint: String,
+        isUserMessage: Boolean
     ) {
+
         if (id == null || id == 0) {
-            // No ID → Insert new
+
             val newText = SaveAnything(
                 summarize = summarize,
                 paraphrase = paraphrase,
@@ -347,11 +326,15 @@ class FullAnythingScreenViewModel @Inject constructor(
                 birthday = "",
                 source = ""
             )
-            anythingScreenRepository.saveAnything(newText)
+
+            repository.saveAnything(newText)
+
         } else {
 
-            val existingText = anythingScreenRepository.getAnythingTextById(id)
+            val existingText = repository.getAnythingTextById(id)
+
             if (existingText != null) {
+
                 val updatedText = existingText.copy(
                     summarize = if (summarize.isNotEmpty()) summarize else existingText.summarize,
                     paraphrase = if (paraphrase.isNotEmpty()) paraphrase else existingText.paraphrase,
@@ -359,8 +342,74 @@ class FullAnythingScreenViewModel @Inject constructor(
                     expand = if (expand.isNotEmpty()) expand else existingText.expand,
                     bulletpoint = if (bulletpoint.isNotEmpty()) bulletpoint else existingText.bulletpoint,
                 )
-                anythingScreenRepository.saveAnything(updatedText)
+
+                repository.saveAnything(updatedText)
             }
         }
     }
 }
+
+sealed class TextAction(val label: String) {
+
+    class Summarize(context: Context) : TextAction(context.getString(R.string.summarize))
+    class Paraphrase(context: Context) : TextAction(context.getString(R.string.paraphrase))
+    class Rephrase(context: Context) : TextAction(context.getString(R.string.rephrase))
+    class Expand(context: Context) : TextAction(context.getString(R.string.expand))
+    class Bulletpoint(context: Context) : TextAction(context.getString(R.string.bullet_point))
+
+    companion object {
+        fun fromActionType(action: ActionType, context: Context): TextAction? = when(action) {
+            ActionType.SUMMARIZE -> Summarize(context)
+            ActionType.PARAPHRASE -> Paraphrase(context)
+            ActionType.REPHRASE -> Rephrase(context)
+            ActionType.EXPAND -> Expand(context)
+            ActionType.BULLETPOINT -> Bulletpoint(context)
+            else -> null
+        }
+    }
+}
+
+class SavedAnythingMapper(private val context: Context) {
+
+    data class ResultsBundle(
+        val results: Map<String, String>,
+        val completed: Set<String>,
+        val originalSummarizedText: String
+    )
+
+    fun map(saved: SaveAnything): ResultsBundle {
+        val results = mutableMapOf<String, String>()
+        val completed = mutableSetOf<String>()
+
+        val actions = listOf(
+            TextAction.Summarize(context),
+            TextAction.Paraphrase(context),
+            TextAction.Rephrase(context),
+            TextAction.Expand(context),
+            TextAction.Bulletpoint(context)
+        )
+
+        actions.forEach { action ->
+            val text = when (action) {
+                is TextAction.Summarize -> saved.summarize
+                is TextAction.Paraphrase -> saved.paraphrase
+                is TextAction.Rephrase -> saved.rephrase
+                is TextAction.Expand -> saved.expand
+                is TextAction.Bulletpoint -> saved.bulletpoint
+            }
+
+            if (text.isNotBlank()) {
+                results[action.label] = text
+                completed += action.label
+            }
+        }
+
+        return ResultsBundle(
+            results = results,
+            completed = completed,
+            originalSummarizedText = saved.summarize
+        )
+    }
+}
+
+

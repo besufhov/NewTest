@@ -15,12 +15,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val sharedImageViewModel: SharedImageViewModel by viewModels() // ✅ Activity-scoped
+    private val sharedImageViewModel: SharedImageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ✅ Initialize AdMob
         MobileAds.initialize(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -30,13 +29,10 @@ class MainActivity : ComponentActivity() {
             window.statusBarColor = Color.TRANSPARENT // fallback for old devices
         }
 
-        // Set light status bar icons (dark icons on light background)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         setContent {
-            NavigationController(sharedImageViewModel) // ✅ Pass it down
+            NavigationController(sharedImageViewModel)
         }
     }
 }
-
-

@@ -9,10 +9,10 @@ import com.kaankivancdilli.summary.R
 import com.kaankivancdilli.summary.data.model.local.image.ImageEntity
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
 import com.kaankivancdilli.summary.ui.state.network.ResultState
-import com.kaankivancdilli.summary.data.repository.sub.summary.SummaryScreenRepository
+import com.kaankivancdilli.summary.data.repository.sub.SummaryScreenRepository
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
 import com.kaankivancdilli.summary.core.billing.manager.BillingManager
-import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import com.kaankivancdilli.summary.network.rest.RestApiManager
-import com.kaankivancdilli.summary.ui.state.usage.FreeUsageTracker
+import com.kaankivancdilli.summary.core.state.FreeUsageTracker
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 
@@ -572,4 +572,3 @@ class SummaryScreenViewModel @Inject constructor(
         }
     }
 }
-

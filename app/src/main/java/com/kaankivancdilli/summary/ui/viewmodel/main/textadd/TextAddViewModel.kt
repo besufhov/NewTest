@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaankivancdilli.summary.data.local.dao.textedit.TextEditDao
 import com.kaankivancdilli.summary.data.model.local.textedit.SaveEditTexts
 import com.kaankivancdilli.summary.network.ws.WebSocketManager
-import com.kaankivancdilli.summary.ui.state.subscription.SubscriptionChecker
+import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
 import com.kaankivancdilli.summary.ui.state.network.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
