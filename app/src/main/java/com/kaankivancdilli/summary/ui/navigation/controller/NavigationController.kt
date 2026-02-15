@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.kaankivancdilli.summary.core.handler.photomain.PageBoundedOcrHandler
+import com.kaankivancdilli.summary.core.domain.handler.photomain.PageBoundedOcrHandler
 import com.kaankivancdilli.summary.ui.navigation.layout.BottomNavigationBar
 import com.kaankivancdilli.summary.ui.navigation.NavigationBarItems
 import com.kaankivancdilli.summary.ui.viewmodel.sub.sharedimage.SharedImageViewModel

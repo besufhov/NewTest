@@ -1,6 +1,6 @@
 package com.kaankivancdilli.summary.core.mapper.anything
 
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 
 object SaveAnythingMapper {
 

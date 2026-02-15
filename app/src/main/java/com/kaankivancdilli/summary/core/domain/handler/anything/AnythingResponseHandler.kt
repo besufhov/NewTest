@@ -1,10 +1,10 @@
-package com.kaankivancdilli.summary.core.handler.anything
+package com.kaankivancdilli.summary.core.domain.handler.anything
 
 import android.content.Context
 import android.util.Log
 import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
 import com.kaankivancdilli.summary.core.state.FreeUsageTracker
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.core.mapper.anything.SaveAnythingMapper
 import com.kaankivancdilli.summary.core.mapper.anything.TypeMapper

@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.core.handler.photomain
+package com.kaankivancdilli.summary.core.domain.handler.photomain
 
 import android.content.Context
 import android.graphics.ImageFormat

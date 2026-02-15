@@ -32,7 +32,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kaankivancdilli.summary.ui.viewmodel.main.photomain.OcrViewModel
-import com.kaankivancdilli.summary.core.handler.photomain.PageBoundedOcrHandler
+import com.kaankivancdilli.summary.core.domain.handler.photomain.PageBoundedOcrHandler
 import com.kaankivancdilli.summary.ui.component.photomain.text.preview.PreviewTextView
 import androidx.compose.ui.platform.*
 import com.kaankivancdilli.summary.ui.component.photomain.image.ImagePreviewRow

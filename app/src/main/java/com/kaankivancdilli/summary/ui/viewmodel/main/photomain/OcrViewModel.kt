@@ -18,7 +18,7 @@ import androidx.camera.core.ImageProxy
 import android.net.Uri
 import com.kaankivancdilli.summary.core.controller.photomain.OcrCameraController
 import com.kaankivancdilli.summary.core.processor.OcrProcessor
-import com.kaankivancdilli.summary.core.handler.photomain.PageBoundedOcrHandler
+import com.kaankivancdilli.summary.core.domain.handler.photomain.PageBoundedOcrHandler
 import com.kaankivancdilli.summary.data.worker.OCRWorker
 import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository
 import com.kaankivancdilli.summary.ui.state.texttoimage.TextImageState

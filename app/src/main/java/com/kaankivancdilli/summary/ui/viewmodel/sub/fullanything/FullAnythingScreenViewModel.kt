@@ -6,15 +6,17 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.network.rest.RestApiManager
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
 import com.kaankivancdilli.summary.core.state.FreeUsageTracker
 import com.kaankivancdilli.summary.core.domain.SubscriptionChecker
+import com.kaankivancdilli.summary.core.domain.fullanything.FullAnythingEditedResponseUpdater
 import com.kaankivancdilli.summary.ui.viewmodel.sub.subscription.SubscriptionViewModel
-import com.kaankivancdilli.summary.core.billing.manager.BillingManager
+import com.kaankivancdilli.summary.core.domain.handler.fullanything.FullAnythingResponseHandler
+import com.kaankivancdilli.summary.core.domain.handler.SubscriptionHandler
+import com.kaankivancdilli.summary.core.mapper.fullanything.SavedAnythingMapper
 import com.kaankivancdilli.summary.ui.state.network.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,10 +31,10 @@ class FullAnythingScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val anythingScreenRepository: AnythingScreenRepository,
     private val subscriptionChecker: SubscriptionChecker,
-    private val billingManager: BillingManager,
     savedStateHandle: SavedStateHandle,
     private val freeUsageTracker: FreeUsageTracker,
-    private val saveHandler: FullAnythingSaveHandler
+    private val handler: FullAnythingResponseHandler,
+    private val subscriptionHandler: SubscriptionHandler,
 
     ) : ViewModel() {
 
@@ -143,34 +145,21 @@ class FullAnythingScreenViewModel @Inject constructor(
     }
 
     fun subscribeUser(activity: Activity, subscriptionViewModel: SubscriptionViewModel) {
-        billingManager.startConnection {
-            billingManager.setPurchaseAcknowledgedListener {
-                viewModelScope.launch {
-                    val isNowSubscribed = subscriptionChecker.isUserSubscribed()
-                    _isSubscribed.value = isNowSubscribed
-                    if (isNowSubscribed) {
-                        if (pendingContent != null) {
-                            sendToWebSocket(pendingContent!!, pendingSummarizedText!!, pendingActionType)
-                            clearPendingMessage()
-                        }
-                    }
-                    _showSubscribeDialog.value = false
-                }
-            }
-
-            billingManager.setSubscriptionListener { isSubscribed ->
-                // This block runs if the user either successfully subscribes or cancels
-                if (!isSubscribed) {
-                    // Reset loading/spinner state
-                    _processingAction.value = null
-                    _showSubscribeDialog.value = false
-                }
-            }
-
-            billingManager.launchPurchase(activity, "monthly_subscription")
-        }
+        subscriptionHandler.subscribeUser(
+            activity = activity,
+            viewModelScope = viewModelScope,
+            pendingContent = pendingContent,
+            pendingSummarizedText = pendingSummarizedText,
+            pendingActionType = pendingActionType,
+            setSubscribed = { _isSubscribed.value = it },
+            hideDialog = { _showSubscribeDialog.value = false },
+            resetProcessing = { _processingAction.value = null },
+            sendMessage = { content, summarizedText, actionType ->
+                sendToWebSocket(content, summarizedText, actionType)
+            },
+            clearPending = { clearPendingMessage() }
+        )
     }
-
 
     fun hideSubscribeDialog() {
         _showSubscribeDialog.value = false
@@ -196,7 +185,6 @@ class FullAnythingScreenViewModel @Inject constructor(
         }
     }
 
-
     fun resetInterstitialAdTrigger() {
         _showInterstitialAd.value = false
     }
@@ -206,7 +194,6 @@ class FullAnythingScreenViewModel @Inject constructor(
             freeUsageTracker.resetCount()
             Log.d("AnythingViewModel", "Free usage count reset after rewarded ad")
 
-            // Set flag to skip interstitial ad once after reset
             skipInterstitialOnceAfterReset = true
 
             hideSubscribeDialog()
@@ -225,191 +212,37 @@ class FullAnythingScreenViewModel @Inject constructor(
         _continueAfterAd = null
     }
 
+    fun updateEditedResponse(action: ActionType, editedText: String, originalId: Int?) {
+        val existing = _saveAnything.value.firstOrNull() ?: return
+
+        val updater = FullAnythingEditedResponseUpdater(context)
+        val result = updater.update(existing, action, editedText)
+
+        saveResultForAction(result.actionKey, editedText)
+
+        viewModelScope.launch {
+            anythingScreenRepository.saveAnything(result.updatedSaveAnything)
+            _saveAnything.value = listOf(result.updatedSaveAnything)
+        }
+    }
+
     private fun observeTexts() {
         viewModelScope.launch {
             restApiManager.texts.collect { result ->
                 when (result) {
-                    is ResultState.Success -> {
-                            val extractedText = result.data
-                            val existing = _saveAnything.value.firstOrNull()
-                            val updated = existing?.copy(
-                                summarize = if (_isSummarizedText.value) extractedText else existing.summarize,
-                                paraphrase = if (_isParaphrasedText.value) extractedText else existing.paraphrase,
-                                rephrase = if (_isRephrasedText.value) extractedText else existing.rephrase,
-                                expand = if (_isExpandedText.value) extractedText else existing.expand,
-                                bulletpoint = if (_isBulletpointedText.value) extractedText else existing.bulletpoint,
-                            )
-
-
-                            if (updated != null) {
-                                _saveAnything.value = listOf(updated)
-                                saveHandler.saveAnything(
-                                    id = updated.id.takeIf { it > 0 },
-                                    summarize = updated.summarize,
-                                    paraphrase = updated.paraphrase,
-                                    rephrase = updated.rephrase,
-                                    expand = updated.expand,
-                                    bulletpoint = updated.bulletpoint,
-                                    isUserMessage = false
-                                )
-
-                            }
-
-                        _isSummarizedText.value = false
-                        _isParaphrasedText.value = false
-                        _isRephrasedText.value = false
-                        _isExpandedText.value = false
-                        _isBulletpointedText.value = false
-                    }
-
+                    is ResultState.Success -> handler.handleSuccess(
+                        saveAnythingFlow = _saveAnything,
+                        isSummarizedText = _isSummarizedText,
+                        isParaphrasedText = _isParaphrasedText,
+                        isRephrasedText = _isRephrasedText,
+                        isExpandedText = _isExpandedText,
+                        isBulletpointedText = _isBulletpointedText,
+                        extractedText = result.data
+                    )
                     is ResultState.Error -> _errorMessage.value = result.message
                     ResultState.Loading, is ResultState.Idle -> {}
                 }
             }
         }
     }
-
-    fun updateEditedResponse(action: ActionType, editedText: String, originalId: Int?) {
-        val existing = _saveAnything.value.firstOrNull() ?: return
-        val updated = when (action) {
-            ActionType.SUMMARIZE -> existing.copy(summarize = editedText)
-            ActionType.PARAPHRASE -> existing.copy(paraphrase = editedText)
-            ActionType.REPHRASE -> existing.copy(rephrase = editedText)
-            ActionType.EXPAND -> existing.copy(expand = editedText)
-            ActionType.BULLETPOINT -> existing.copy(bulletpoint = editedText)
-            else -> existing
-        }
-
-        val actionKey = TextAction.fromActionType(action, context)?.label ?: "Original"
-
-
-        saveResultForAction(actionKey, editedText)
-
-        viewModelScope.launch {
-            anythingScreenRepository.saveAnything(updated)
-            _saveAnything.value = listOf(updated)
-        }
-    }
 }
-
-class FullAnythingSaveHandler @Inject constructor(
-    private val repository: AnythingScreenRepository
-) {
-
-    suspend fun saveAnything(
-        id: Int?,
-        summarize: String,
-        rephrase: String,
-        paraphrase: String,
-        expand: String,
-        bulletpoint: String,
-        isUserMessage: Boolean
-    ) {
-
-        if (id == null || id == 0) {
-
-            val newText = SaveAnything(
-                summarize = summarize,
-                paraphrase = paraphrase,
-                rephrase = rephrase,
-                expand = expand,
-                bulletpoint = bulletpoint,
-                isUserMessage = isUserMessage,
-                type = "",
-                name = "",
-                season = "",
-                episode = "",
-                author = "",
-                chapter = "",
-                director = "",
-                year = "",
-                birthday = "",
-                source = ""
-            )
-
-            repository.saveAnything(newText)
-
-        } else {
-
-            val existingText = repository.getAnythingTextById(id)
-
-            if (existingText != null) {
-
-                val updatedText = existingText.copy(
-                    summarize = if (summarize.isNotEmpty()) summarize else existingText.summarize,
-                    paraphrase = if (paraphrase.isNotEmpty()) paraphrase else existingText.paraphrase,
-                    rephrase = if (rephrase.isNotEmpty()) rephrase else existingText.rephrase,
-                    expand = if (expand.isNotEmpty()) expand else existingText.expand,
-                    bulletpoint = if (bulletpoint.isNotEmpty()) bulletpoint else existingText.bulletpoint,
-                )
-
-                repository.saveAnything(updatedText)
-            }
-        }
-    }
-}
-
-sealed class TextAction(val label: String) {
-
-    class Summarize(context: Context) : TextAction(context.getString(R.string.summarize))
-    class Paraphrase(context: Context) : TextAction(context.getString(R.string.paraphrase))
-    class Rephrase(context: Context) : TextAction(context.getString(R.string.rephrase))
-    class Expand(context: Context) : TextAction(context.getString(R.string.expand))
-    class Bulletpoint(context: Context) : TextAction(context.getString(R.string.bullet_point))
-
-    companion object {
-        fun fromActionType(action: ActionType, context: Context): TextAction? = when(action) {
-            ActionType.SUMMARIZE -> Summarize(context)
-            ActionType.PARAPHRASE -> Paraphrase(context)
-            ActionType.REPHRASE -> Rephrase(context)
-            ActionType.EXPAND -> Expand(context)
-            ActionType.BULLETPOINT -> Bulletpoint(context)
-            else -> null
-        }
-    }
-}
-
-class SavedAnythingMapper(private val context: Context) {
-
-    data class ResultsBundle(
-        val results: Map<String, String>,
-        val completed: Set<String>,
-        val originalSummarizedText: String
-    )
-
-    fun map(saved: SaveAnything): ResultsBundle {
-        val results = mutableMapOf<String, String>()
-        val completed = mutableSetOf<String>()
-
-        val actions = listOf(
-            TextAction.Summarize(context),
-            TextAction.Paraphrase(context),
-            TextAction.Rephrase(context),
-            TextAction.Expand(context),
-            TextAction.Bulletpoint(context)
-        )
-
-        actions.forEach { action ->
-            val text = when (action) {
-                is TextAction.Summarize -> saved.summarize
-                is TextAction.Paraphrase -> saved.paraphrase
-                is TextAction.Rephrase -> saved.rephrase
-                is TextAction.Expand -> saved.expand
-                is TextAction.Bulletpoint -> saved.bulletpoint
-            }
-
-            if (text.isNotBlank()) {
-                results[action.label] = text
-                completed += action.label
-            }
-        }
-
-        return ResultsBundle(
-            results = results,
-            completed = completed,
-            originalSummarizedText = saved.summarize
-        )
-    }
-}
-
-

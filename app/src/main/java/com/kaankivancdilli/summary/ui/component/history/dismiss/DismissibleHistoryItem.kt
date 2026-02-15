@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaankivancdilli.summary.R
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.ui.component.history.HistoryItem
 import com.kaankivancdilli.summary.ui.screens.sub.history.type.Type
 

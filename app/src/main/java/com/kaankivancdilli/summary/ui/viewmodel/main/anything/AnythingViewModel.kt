@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.ui.state.network.ResultState
 import com.kaankivancdilli.summary.network.rest.RestApiManager
 import com.kaankivancdilli.summary.core.state.FreeUsageTracker
@@ -15,7 +15,7 @@ import com.kaankivancdilli.summary.core.controller.anything.AdController
 import com.kaankivancdilli.summary.core.controller.anything.MessageDispatcher
 import com.kaankivancdilli.summary.core.controller.anything.SubscriptionController
 import com.kaankivancdilli.summary.core.manager.CountdownManager
-import com.kaankivancdilli.summary.core.handler.anything.AnythingResponseHandler
+import com.kaankivancdilli.summary.core.domain.handler.anything.AnythingResponseHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

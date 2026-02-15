@@ -14,8 +14,8 @@ fun showInterstitialAd(activity: Activity, onAdDismissed: () -> Unit) {
 
     InterstitialAd.load(
         activity,
-        "ca-app-pub-3940256099942544/1033173712", // Your real interstitial ad unit ID
-       // , // Test
+        "ca-app-pub-7431967243613151/7711627538",
+       // "ca-app-pub-3940256099942544/1033173712", // Test
         adRequest,
         object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(ad: InterstitialAd) {

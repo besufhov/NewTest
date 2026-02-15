@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import com.kaankivancdilli.summary.core.handler.photomain.PageBoundedOcrHandler
+import com.kaankivancdilli.summary.core.domain.handler.photomain.PageBoundedOcrHandler
 import kotlin.math.roundToInt
 
 @Composable

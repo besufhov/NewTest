@@ -8,7 +8,7 @@ import com.kaankivancdilli.summary.data.local.dao.image.ImageDao
 import com.kaankivancdilli.summary.data.local.dao.text.TextDao
 import com.kaankivancdilli.summary.data.model.local.converter.Converters
 import com.kaankivancdilli.summary.data.model.local.image.ImageEntity
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
 
 @Database(entities = [SaveTexts::class, SaveAnything::class, ImageEntity::class], version = 8)

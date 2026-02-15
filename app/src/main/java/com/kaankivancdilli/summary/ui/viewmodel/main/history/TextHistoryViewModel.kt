@@ -4,7 +4,7 @@ package com.kaankivancdilli.summary.ui.viewmodel.main.history
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.data.model.local.text.SaveTexts
 import com.kaankivancdilli.summary.data.repository.main.anything.AnythingScreenRepository
 import com.kaankivancdilli.summary.data.repository.sub.SummaryScreenRepository

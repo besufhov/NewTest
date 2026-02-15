@@ -2,7 +2,7 @@ package com.kaankivancdilli.summary.data.repository.main.anything
 
 import android.util.Log
 import com.kaankivancdilli.summary.data.local.dao.anything.AnythingDao
-import com.kaankivancdilli.summary.data.model.local.anything.SaveAnything
+import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

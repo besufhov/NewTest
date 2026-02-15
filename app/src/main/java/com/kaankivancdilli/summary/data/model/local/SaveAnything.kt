@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.data.model.local.anything
+package com.kaankivancdilli.summary.data.model.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

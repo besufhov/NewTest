@@ -18,7 +18,7 @@ fun showRewardedInterstitialAd(
 
     RewardedInterstitialAd.load(
         activity,
-        "ca-app-pub-7431967243613151/6104732513", // ✅ Your real rewarded interstitial ad unit ID
+        "ca-app-pub-7431967243613151/6104732513",
       //  "ca-app-pub-3940256099942544/5354046379", // Test
         adRequest,
         object : RewardedInterstitialAdLoadCallback() {
