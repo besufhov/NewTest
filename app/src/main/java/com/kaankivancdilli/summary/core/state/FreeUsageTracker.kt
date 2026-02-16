@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 val Context.usagePrefsDataStore: DataStore<Preferences> by preferencesDataStore(name = "usage_prefs")
 
-
 class FreeUsageTracker @Inject constructor(
     @ApplicationContext private val context: Context
 ) {

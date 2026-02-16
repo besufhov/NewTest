@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.di.module.ocr
+package com.kaankivancdilli.summary.di.module
 
 import android.content.Context
 import com.kaankivancdilli.summary.data.repository.main.photomain.OcrRepository

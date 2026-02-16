@@ -4,8 +4,12 @@ import android.content.Context
 import com.kaankivancdilli.summary.core.domain.model.TextAction
 import com.kaankivancdilli.summary.data.model.local.SaveAnything
 import com.kaankivancdilli.summary.ui.screens.sub.summary.type.ActionType
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class FullAnythingEditedResponseUpdater(private val context: Context) {
+class FullAnythingEditedResponseUpdater @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     data class UpdateResult(
         val updatedSaveAnything: SaveAnything,

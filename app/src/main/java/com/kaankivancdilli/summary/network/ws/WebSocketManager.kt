@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.*
 import javax.inject.Inject
 
-class WebSocketManager @Inject constructor() {
+class WebSocketManager @Inject constructor(
+    private val client: OkHttpClient,
+    private val gson: Gson
+) {
 
-    private val gson = Gson()
-    private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
 
     private val _messages = MutableStateFlow<ResultState<String>>(ResultState.Idle)

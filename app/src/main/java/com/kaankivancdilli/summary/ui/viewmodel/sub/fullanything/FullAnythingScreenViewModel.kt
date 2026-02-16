@@ -35,10 +35,8 @@ class FullAnythingScreenViewModel @Inject constructor(
     private val freeUsageTracker: FreeUsageTracker,
     private val handler: FullAnythingResponseHandler,
     private val subscriptionHandler: SubscriptionHandler,
-
+    private val restApiManager: RestApiManager
     ) : ViewModel() {
-
-    private val restApiManager = RestApiManager()
 
     private val _saveAnything = MutableStateFlow<List<SaveAnything>>(emptyList())
     val saveAnything: StateFlow<List<SaveAnything>> = _saveAnything
@@ -129,11 +127,11 @@ class FullAnythingScreenViewModel @Inject constructor(
             }
 
             }
-            sendToWebSocket(content, summarizedText, actionType)
+            sendHTTPRequest(content, summarizedText, actionType)
         }
     }
 
-    private suspend fun sendToWebSocket(content: String, summarizedText: String, actionType: ActionType?) {
+    private fun sendHTTPRequest(content: String, summarizedText: String, actionType: ActionType?) {
         originalSummarizedText = summarizedText
         _isSummarizedText.value = actionType == ActionType.SUMMARIZE
         _isParaphrasedText.value = actionType == ActionType.PARAPHRASE
@@ -155,7 +153,7 @@ class FullAnythingScreenViewModel @Inject constructor(
             hideDialog = { _showSubscribeDialog.value = false },
             resetProcessing = { _processingAction.value = null },
             sendMessage = { content, summarizedText, actionType ->
-                sendToWebSocket(content, summarizedText, actionType)
+                sendHTTPRequest(content, summarizedText, actionType)
             },
             clearPending = { clearPendingMessage() }
         )
@@ -199,7 +197,7 @@ class FullAnythingScreenViewModel @Inject constructor(
             hideSubscribeDialog()
 
             if (pendingContent != null && _isSummarizedText.value) {
-                sendToWebSocket(pendingContent!!, pendingSummarizedText!!, pendingActionType!!)
+                sendHTTPRequest(pendingContent!!, pendingSummarizedText!!, pendingActionType!!)
                 clearPendingMessage()
             } else {
                 Log.d("RewardReset", "Skipped resend because response was already processed")

@@ -39,6 +39,6 @@ fun getLocalizedTypeFromKey(typeKey: String, context: Context): String {
         "book" -> context.getString(R.string.book)
         "movie" -> context.getString(R.string.movie)
         "article" -> context.getString(R.string.article)
-        else -> typeKey  // Default case if no match
+        else -> typeKey
     }
 }

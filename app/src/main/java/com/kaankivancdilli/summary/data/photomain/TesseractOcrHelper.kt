@@ -4,12 +4,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import com.googlecode.tesseract.android.TessBaseAPI
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
+import javax.inject.Inject
 
-class TesseractOcrHelper(
-    val context: Context,
+class TesseractOcrHelper @Inject constructor(
+    @ApplicationContext val context: Context,
     languageCode: String = Locale.getDefault().language
 ) {
 

@@ -46,7 +46,7 @@ fun saveTextAsTxtToDownloads(context: Context, fileName: String, text: String) {
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        // ✅ Scoped storage (Android 10+)
+        // Scoped storage (Android 10+)
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileNameWithExt)
             put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
@@ -66,7 +66,7 @@ fun saveTextAsTxtToDownloads(context: Context, fileName: String, text: String) {
         }
 
     } else {
-        // ✅ Legacy storage (Android 9 and below)
+        // Legacy storage (Android 9 and below)
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(downloadsDir, fileNameWithExt)
 

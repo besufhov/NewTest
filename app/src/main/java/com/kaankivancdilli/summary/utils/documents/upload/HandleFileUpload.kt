@@ -30,7 +30,7 @@ fun handleFileUpload(
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val fileSize = getFileSize(context, uri)
-            val maxFileSizeMB = 7 * 1024 * 1024 // 7 MB
+            val maxFileSizeMB = 7 * 1024 * 1024
 
             if (fileSize > maxFileSizeMB * 1024L * 1024L) {
                 withContext(Dispatchers.Main) {

@@ -7,9 +7,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
-   // id("androidx.room")
-  //  kotlin("kapt")
-
 }
 
 android {
@@ -24,23 +21,18 @@ android {
         versionName = "1.2.5"
 
         testInstrumentationRunner = "androidx.kaankivancdilli.summary.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-          //  shrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
-
-  //  androidResources {
-  //      noCompress += "traineddata"
-  //  }
-
 
     packaging {
         resources {
@@ -54,7 +46,7 @@ android {
         }
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14" // Ensure correct version
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -135,20 +127,10 @@ dependencies {
     implementation (libs.androidx.datastore.preferences)
     implementation (libs.billing.ktx)
     implementation("org.apache.poi:poi-ooxml:5.2.3")
-  //  implementation("org.apache.poi:poi-ooxml:3.17")
-   // implementation ("org.docx4j:docx4j-android:8.3.5")
-
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
-  //  implementation("org.apache.pdfbox:pdfbox:2.0.27")
-  //  implementation("org.apache.tika:tika-core:2.9.0")
-  //  implementation("org.apache.tika:tika-parsers-standard-package:2.9.0")
- //   implementation("org.apache.tika:tika-parsers:2.9.0")
-  //  implementation("com.github.librepdf:openpdf:1.3.30")
     implementation(libs.language.id)
     implementation(libs.play.services.ads)
-
     implementation ("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
-
 
 }
 

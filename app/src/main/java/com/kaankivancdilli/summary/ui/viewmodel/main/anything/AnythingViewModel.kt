@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class AnythingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -33,9 +32,8 @@ class AnythingViewModel @Inject constructor(
     val freeUsageTracker: FreeUsageTracker,
     private val countdownManager: CountdownManager,
     private val responseHandler: AnythingResponseHandler,
+    private val restApiManager: RestApiManager
 ) : ViewModel() {
-
-    private val restApiManager = RestApiManager()
 
     private val adController = AdController(freeUsageTracker)
     private val subscriptionController = SubscriptionController(subscriptionChecker, billingManager)

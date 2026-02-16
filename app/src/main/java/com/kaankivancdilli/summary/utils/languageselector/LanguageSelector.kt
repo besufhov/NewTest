@@ -74,7 +74,7 @@ fun LanguageSelector(
                     text = { Text(name) },
                     onClick = {
                         tts?.language = locale
-                        onLanguageSelected(locale) // Update selected language in the parent composable
+                        onLanguageSelected(locale)
                         expanded = false
                     }
                 )

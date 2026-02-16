@@ -14,11 +14,12 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
+import javax.inject.Inject
 
-class RestApiManager {
-
-    private val gson = Gson()
-    private val client = OkHttpClient()
+class RestApiManager @Inject constructor(
+    private val client: OkHttpClient,
+    private val gson: Gson
+) {
     private val _messages = MutableStateFlow<ResultState<String>>(ResultState.Idle)
     val texts: StateFlow<ResultState<String>> = _messages.asStateFlow()
 

@@ -23,7 +23,6 @@ fun rememberKeyboardHeightDp(): Dp {
             val screenHeight = view.rootView.height
             val heightDiff = screenHeight - r.height()
 
-            // Only consider it keyboard if height diff is significant
             if (heightDiff > screenHeight * 0.15) {
                 keyboardHeight.value = heightDiff
             } else {

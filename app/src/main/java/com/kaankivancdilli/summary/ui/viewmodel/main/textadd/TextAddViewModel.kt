@@ -19,9 +19,8 @@ import javax.inject.Inject
 class TextAddViewModel @Inject constructor(
     private val dao: TextEditDao,
     val subscriptionChecker: SubscriptionChecker,
+    private val webSocketManager: WebSocketManager
 ) : ViewModel() {
-
-    private val webSocketManager = WebSocketManager()
 
     private val _isSubscribed = MutableStateFlow(false)
     val isSubscribed: StateFlow<Boolean> = _isSubscribed
@@ -33,7 +32,6 @@ class TextAddViewModel @Inject constructor(
     val summaryState: StateFlow<ResultState<String>> = _summaryState.asStateFlow()
 
     init {
-
         viewModelScope.launch {
             val subscribed = subscriptionChecker.isUserSubscribed()
             _isSubscribed.value = subscribed
@@ -61,16 +59,15 @@ class TextAddViewModel @Inject constructor(
     }
 
     suspend fun summarizeText(text: String? = null) {
-        val currentText = text ?: _textState.value  // Use passed text or the current _textState value
+        val currentText = text ?: _textState.value
 
         if (currentText.isNotBlank()) {
             _summaryState.value = ResultState.Loading
             webSocketManager.sendMessage("Summarize this: $currentText")
 
-            // Collect once per request
             viewModelScope.launch {
                 webSocketManager.texts
-                    .filterNotNull() // Optional: avoid nulls if any
+                    .filterNotNull()
                     .collect {
                         _summaryState.value = it
                     }
@@ -85,7 +82,7 @@ class TextAddViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        webSocketManager.disconnect() // ✅ Disconnect when ViewModel is destroyed
+        webSocketManager.disconnect()
     }
 
     fun resetSummary() {

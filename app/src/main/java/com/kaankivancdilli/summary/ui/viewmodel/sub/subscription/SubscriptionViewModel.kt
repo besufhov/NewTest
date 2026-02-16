@@ -19,7 +19,7 @@ class SubscriptionViewModel @Inject constructor(
     init {
         checkSubscription()
         billingManager.setSubscriptionListener { isSubscribed ->
-            _isSubscribed.value = isSubscribed // Update live subscription status
+            _isSubscribed.value = isSubscribed
         }
     }
 

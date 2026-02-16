@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
     private val billingManager: BillingManager,
@@ -38,7 +37,7 @@ class SettingsScreenViewModel @Inject constructor(
     fun subscribe(activity: Activity, subscriptionViewModel: SubscriptionViewModel) {
         billingManager.startConnection {
             billingManager.launchPurchase(activity, "monthly_subscription")
-            subscriptionViewModel.checkSubscription() // Ensure UI updates
+            subscriptionViewModel.checkSubscription()
         }
     }
 

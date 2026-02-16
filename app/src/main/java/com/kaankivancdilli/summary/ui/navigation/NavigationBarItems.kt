@@ -8,7 +8,6 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
-
 sealed class NavigationBarItems(val route: String, val icon: ImageVector) {
     object PhotoMain : NavigationBarItems("photoMain", Icons.Outlined.CameraAlt)
     object Anything : NavigationBarItems("anything", Icons.Outlined.Addchart)

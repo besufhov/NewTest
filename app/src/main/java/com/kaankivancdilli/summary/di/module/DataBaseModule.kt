@@ -1,4 +1,4 @@
-package com.kaankivancdilli.summary.di.module.database
+package com.kaankivancdilli.summary.di.module
 
 import android.content.Context
 import androidx.room.Room

@@ -1,8 +1,6 @@
 package com.kaankivancdilli.summary.core.detection
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import com.google.mlkit.nl.languageid.LanguageIdentification
 import kotlinx.coroutines.tasks.await
 import java.util.Locale

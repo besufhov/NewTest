@@ -25,7 +25,6 @@ import com.kaankivancdilli.summary.ui.state.texttoimage.TextImageState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-
 @HiltViewModel
 class OcrViewModel @Inject constructor(
     private val ocrRepository: OcrRepository,

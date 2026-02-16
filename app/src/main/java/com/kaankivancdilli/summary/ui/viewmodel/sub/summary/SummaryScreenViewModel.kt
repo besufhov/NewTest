@@ -28,7 +28,6 @@ import com.kaankivancdilli.summary.network.rest.RestApiManager
 import com.kaankivancdilli.summary.core.state.FreeUsageTracker
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-
 @HiltViewModel
 class SummaryScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -38,11 +37,9 @@ class SummaryScreenViewModel @Inject constructor(
     private val savedTextMapper: SavedTextMapper,
     private val summaryEditedResponseUpdater: SummaryEditedResponseUpdater,
     private val saveTextsHandler: SaveTextsHandler,
-    private val subscriptionHandler: SubscriptionHandler
-
+    private val subscriptionHandler: SubscriptionHandler,
+    private val restApiManager: RestApiManager
     ) : ViewModel() {
-
-    private val restApiManager = RestApiManager()
 
     private var currentId: Int = 0
 
@@ -153,7 +150,7 @@ class SummaryScreenViewModel @Inject constructor(
                     return@launch
                 }
             }
-            sendToWebSocket(content, ocrText, actionType)
+            sendHTTPRequest(content, ocrText, actionType)
         }
     }
 
@@ -168,13 +165,13 @@ class SummaryScreenViewModel @Inject constructor(
             hideDialog = { _showSubscribeDialog.value = false },
             resetProcessing = { _processingAction.value = null },
             sendMessage = { content, summarizedText, actionType ->
-                sendToWebSocket(content, summarizedText, actionType)
+                sendHTTPRequest(content, summarizedText, actionType)
             },
             clearPending = { clearPendingMessage() }
         )
     }
 
-    private suspend fun sendToWebSocket(content: String, ocrText: String, actionType: ActionType?) {
+    private fun sendHTTPRequest(content: String, ocrText: String, actionType: ActionType?) {
         originalOcrText = ocrText
         _isSummarizedText.value = actionType == ActionType.SUMMARIZE
         _isParaphrasedText.value = actionType == ActionType.PARAPHRASE
@@ -252,7 +249,7 @@ class SummaryScreenViewModel @Inject constructor(
             hideSubscribeDialog()
 
             if (pendingContent != null && _isSummarizedText.value) {
-                sendToWebSocket(pendingContent!!, pendingOcrText!!, pendingActionType!!)
+                sendHTTPRequest(pendingContent!!, pendingOcrText!!, pendingActionType!!)
                 clearPendingMessage()
             } else {
                 Log.d("RewardReset", "Skipped resend because response was already processed")

@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             window.statusBarColor = Color.WHITE
         } else {
-            window.statusBarColor = Color.TRANSPARENT // fallback for old devices
+            window.statusBarColor = Color.TRANSPARENT
         }
 
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true

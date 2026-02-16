@@ -9,8 +9,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import javax.inject.Inject
 
-class CloudOcrClient {
+class CloudOcrClient @Inject constructor() {
 
     private val apiKey = "AIzaSyDKswgXx933-BPWYEFNK_m4nubWzawPkt4"
 

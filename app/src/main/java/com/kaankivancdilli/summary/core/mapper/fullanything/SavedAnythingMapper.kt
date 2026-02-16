@@ -3,8 +3,11 @@ package com.kaankivancdilli.summary.core.mapper.fullanything
 import android.content.Context
 import com.kaankivancdilli.summary.core.domain.model.TextAction
 import com.kaankivancdilli.summary.data.model.local.SaveAnything
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SavedAnythingMapper(private val context: Context) {
+class SavedAnythingMapper @Inject constructor(
+    @ApplicationContext private val context: Context,) {
 
     data class ResultsBundle(
         val results: Map<String, String>,
